@@ -1,23 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SassieAssignmentImport
 {
     internal class HondaCPOInspectionReport
     {
-
+        private readonly DBHondaCPO _dbHondaCPO;
         private readonly SassieApi _sassieApi;
         private List<Dictionary<int, string>> _presale_list = new List<Dictionary<int, string>>();
         private List<Dictionary<int, string>> _postsale_list = new List<Dictionary<int, string>>();
         private Dictionary<string, Dictionary<string, string>> _presale_vehicles = new Dictionary<string, Dictionary<string, string>>();
         private Dictionary<string, Dictionary<string, string>> _postsale_vehicles = new Dictionary<string, Dictionary<string, string>>();
         private Dictionary<string, string> _inspection_data = new Dictionary<string, string>();
+        private readonly string GRANT_TYPE = "client_credentials";
+        private readonly string CLIENT_ID = "WSwDiUqqv5Q2InctWBHkWeTWmDmfiNJl";
+        private readonly string CLIENT_SECRET = "62UEIr61r2FQc9xyvRn4PBdmRQ4gTPwa";
 
         public HondaCPOInspectionReport()
         {
             _sassieApi = new SassieApi();
+            _dbHondaCPO = new DBHondaCPO();
 
             _presale_list.Add(QuestionMapping.presale_mappingA);
             _presale_list.Add(QuestionMapping.presale_mappingB);
@@ -49,23 +54,21 @@ namespace SassieAssignmentImport
             {
                 var client_data = new AuthenticationRequest
                 {
-                    grant_type = "client_credentials",
-                    client_id = "WSwDiUqqv5Q2InctWBHkWeTWmDmfiNJl",
-                    client_secret = "62UEIr61r2FQc9xyvRn4PBdmRQ4gTPwa"
+                    grant_type = GRANT_TYPE,
+                    client_id = CLIENT_ID,
+                    client_secret = CLIENT_SECRET
                 };
                 var auth_response = await _sassieApi.AuthenticateAsync(client_data);
-                
-                Console.WriteLine("Authentication SUCCESS!");
+
+                Console.WriteLine("Sassie Authentication SUCCESS!");
 
                 var importList = new List<Task<JobImportResponse>>();
                 foreach (int assignmentID in assignments)
                 {
-                    //var result = await ImportSingleAssignmentAsync(assignmentID, auth_response.access_token);
-                    importList.Add(ImportSingleAssignmentAsync(assignmentID, auth_response.access_token));
+                    importList.Add(ImportSingleAssignmentAsync(assignmentID, auth_response.AccessToken));
                 }
 
                 jobImportResponses = await Task.WhenAll(importList);
-                //_jobimport_result.Add(assignmentID, result.job_id);
             }
             catch (Exception ex)
             {
@@ -83,7 +86,9 @@ namespace SassieAssignmentImport
             JobImportResponse job_response;
             try
             {
-                var dsCPOData = new DBHondaCPO().GetHondaCPOOCR(assignmentID);
+                Console.WriteLine($"Processing Assignment ID: {assignmentID}");
+
+                var dsCPOData = _dbHondaCPO.GetHondaCPOOCR(assignmentID);
 
                 var divisionCode = dsCPOData.Tables[0].Rows[0]["Division_Code"].ToString().Trim();
                 //HONDA:: 1039
@@ -115,14 +120,18 @@ namespace SassieAssignmentImport
 
                 job_response = await _sassieApi.ImportJobAsync(_inspection_data, token);
 
-                Console.WriteLine($"Assignment ID: {assignmentID} job import SUCCESS, Job ID: {job_response.job_id}");
+                Console.WriteLine($"Assignment ID: {assignmentID} job import SUCCESS, Job ID: {job_response.JobImport.JobId}");
 
-                job_response.assignment_id = assignmentID;
+                job_response.JobImport.AssignmentId = assignmentID;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"EXCEPTION: Assignment ID: {assignmentID} Message: {ex.Message} ");
-                job_response = new JobImportResponse { job_id = string.Format("ERROR: {0}",ex.Message), assignment_id = assignmentID };
+                job_response = new JobImportResponse { JobImport = new JobImport { JobId = string.Format("ERROR: {0}", ex.Message), AssignmentId = assignmentID } };
+            }
+            finally
+            {
+                
             }
 
             return job_response;
@@ -154,6 +163,8 @@ namespace SassieAssignmentImport
         {
             string vin;
             Dictionary<string, string> detail;
+            _presale_vehicles = new Dictionary<string, Dictionary<string, string>>();
+            _postsale_vehicles = new Dictionary<string, Dictionary<string, string>>();
             foreach (DataRow item in dsCPOData.Tables[1].Rows)
             {
                 vin = item["Vehicle_VIN"].ToString();
@@ -212,6 +223,9 @@ namespace SassieAssignmentImport
                         continue;
                     }
 
+                    //TEMP
+                    //value = ChangeValue(value);
+
                     _inspection_data.Add(q_mapping[qid], value);
 
                     if (!value.ToLower().Equals("yes"))
@@ -264,6 +278,9 @@ namespace SassieAssignmentImport
                         continue;
                     }
 
+                    //TEMP
+                    //value = ChangeValue(value);
+
                     _inspection_data.Add(q_mapping[qid], value);
 
                     if (!value.ToLower().Equals("yes"))
@@ -295,6 +312,11 @@ namespace SassieAssignmentImport
                 }
                 _inspection_data.Add(QuestionMapping.facility_mapping[qid], QuestionMapping.objective[qval].Trim());
             }
+        }
+
+        private string ChangeValue(string value)
+        {
+            return value.ToLower().Equals("na") ? "No" : value;
         }
     }
 }

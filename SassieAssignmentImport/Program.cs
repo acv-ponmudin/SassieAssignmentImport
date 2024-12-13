@@ -19,7 +19,7 @@ namespace SassieAssignmentImport
                 assignmentID = 26224953;//acura 
                 assignmentID = 26224446;//with comments
 
-                List<int> assignments = new List<int>() { assignmentID, 22790360 };
+                List<int> assignments = new List<int>() { assignmentID, 22790360, 23183043 };
                 await new HondaCPOInspectionReport().ImportAssignmentsAsync(assignments);
             }
             catch (Exception ex)
@@ -27,7 +27,8 @@ namespace SassieAssignmentImport
                 Console.WriteLine($"EXCEPTION: {ex.Message}");
             }
 
-            Console.ReadLine();
+            Console.WriteLine($"Enter any key to exit!");
+            Console.ReadKey();
         }
 
         
