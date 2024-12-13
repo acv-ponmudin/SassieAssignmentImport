@@ -223,8 +223,7 @@ namespace SassieAssignmentImport
                         continue;
                     }
 
-                    //TEMP
-                    //value = ChangeValue(value);
+                    value = ChangeNotApplicableText(value);
 
                     _inspection_data.Add(q_mapping[qid], value);
 
@@ -278,8 +277,7 @@ namespace SassieAssignmentImport
                         continue;
                     }
 
-                    //TEMP
-                    //value = ChangeValue(value);
+                    value = ChangeNotApplicableText(value);
 
                     _inspection_data.Add(q_mapping[qid], value);
 
@@ -314,9 +312,9 @@ namespace SassieAssignmentImport
             }
         }
 
-        private string ChangeValue(string value)
+        private string ChangeNotApplicableText(string value)
         {
-            return value.ToLower().Equals("na") ? "No" : value;
+            return value.ToLower().Equals("na") ? "N/A" : value;
         }
     }
 }
