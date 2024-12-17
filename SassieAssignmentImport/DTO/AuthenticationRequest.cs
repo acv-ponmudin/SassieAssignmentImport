@@ -1,4 +1,4 @@
-﻿namespace SassieAssignmentImport
+﻿namespace SassieAssignmentImport.DTO
 {
     internal class AuthenticationRequest
     {

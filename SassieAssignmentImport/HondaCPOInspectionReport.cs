@@ -1,7 +1,9 @@
-﻿using System;
+﻿using SassieAssignmentImport.DTO;
+using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Threading;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SassieAssignmentImport
@@ -14,7 +16,7 @@ namespace SassieAssignmentImport
         private List<Dictionary<int, string>> _postsale_list = new List<Dictionary<int, string>>();
         private Dictionary<string, Dictionary<string, string>> _presale_vehicles = new Dictionary<string, Dictionary<string, string>>();
         private Dictionary<string, Dictionary<string, string>> _postsale_vehicles = new Dictionary<string, Dictionary<string, string>>();
-        private Dictionary<string, string> _inspection_data = new Dictionary<string, string>();
+        private Dictionary<string, string> _inspectionData = new Dictionary<string, string>();
         private readonly string GRANT_TYPE = "client_credentials";
         private readonly string CLIENT_ID = "WSwDiUqqv5Q2InctWBHkWeTWmDmfiNJl";
         private readonly string CLIENT_SECRET = "62UEIr61r2FQc9xyvRn4PBdmRQ4gTPwa";
@@ -52,49 +54,53 @@ namespace SassieAssignmentImport
             JobImportResponse[] jobImportResponses = null;
             try
             {
-                var client_data = new AuthenticationRequest
+                var authRequest = new AuthenticationRequest
                 {
                     grant_type = GRANT_TYPE,
                     client_id = CLIENT_ID,
                     client_secret = CLIENT_SECRET
                 };
-                var auth_response = await _sassieApi.AuthenticateAsync(client_data);
-
-                Console.WriteLine("Sassie Authentication SUCCESS!");
+                var authResponse = await _sassieApi.AuthenticateAsync(authRequest);
 
                 var importList = new List<Task<JobImportResponse>>();
                 foreach (int assignmentID in assignments)
                 {
-                    importList.Add(ImportSingleAssignmentAsync(assignmentID, auth_response.AccessToken));
+                    importList.Add(ImportSingleAssignmentAsync(assignmentID, authResponse.AccessToken));
                 }
 
                 jobImportResponses = await Task.WhenAll(importList);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"EXCEPTION: {ex.Message}");
+                Log.Fatal(ex, "EXCEPTION!");
             }
             finally
             {
                 //write jobImportResponses to file 
-                var result = jobImportResponses;
+                if (jobImportResponses != null && jobImportResponses.Length > 0)
+                {
+                    var json = Newtonsoft.Json.JsonConvert.SerializeObject(jobImportResponses, Newtonsoft.Json.Formatting.Indented);
+                    Log.Information($"RESULT::{Environment.NewLine}{json}");
+                }
             }
         }
 
         public async Task<JobImportResponse> ImportSingleAssignmentAsync(int assignmentID, string token)
         {
-            JobImportResponse job_response;
+            JobImportResponse jobResponse = null;
+            string surveyID = "";
+            string clientLocationID = "";
             try
             {
-                Console.WriteLine($"Processing Assignment ID: {assignmentID}");
+                Log.Information($"Processing Assignment ID: {assignmentID}");
 
                 var dsCPOData = _dbHondaCPO.GetHondaCPOOCR(assignmentID);
 
                 var divisionCode = dsCPOData.Tables[0].Rows[0]["Division_Code"].ToString().Trim();
                 //HONDA:: 1039
                 //ACURA:: 1061
-                var surveyID = divisionCode != "B" ? "1039" : "1061";
-                var clientLocationID = dsCPOData.Tables[0].Rows[0]["Dealer_Code"].ToString().Trim();
+                surveyID = divisionCode != "B" ? "1039" : "1061";
+                clientLocationID = dsCPOData.Tables[0].Rows[0]["Dealer_Code"].ToString().Trim();
 
                 //1. Consultation information 
                 //2. Dealer information 
@@ -106,7 +112,7 @@ namespace SassieAssignmentImport
                 //8. Facility inspection 
                 //9. Facility images 
 
-                _inspection_data = new Dictionary<string, string>() {
+                _inspectionData = new Dictionary<string, string>() {
                     {"survey_id", surveyID },
                     {"client_location_id", clientLocationID }
                 };
@@ -118,23 +124,27 @@ namespace SassieAssignmentImport
                 PopulatePresaleQuestions(dsCPOData);
                 FacilityInspection(dsCPOData);
 
-                job_response = await _sassieApi.ImportJobAsync(_inspection_data, token);
+                var jobRequest = new JobImportRequest
+                {
+                    AssignmentID = assignmentID,
+                    SurveyID = surveyID,
+                    ClientLocationID = clientLocationID,
+                    Data = _inspectionData,
+                    Token = token
+                };
 
-                Console.WriteLine($"Assignment ID: {assignmentID} job import SUCCESS, Job ID: {job_response.JobImport.JobId}");
-
-                job_response.JobImport.AssignmentId = assignmentID;
+                jobResponse = await _sassieApi.ImportJobAsync(jobRequest);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"EXCEPTION: Assignment ID: {assignmentID} Message: {ex.Message} ");
-                job_response = new JobImportResponse { JobImport = new JobImport { JobId = string.Format("ERROR: {0}", ex.Message), AssignmentId = assignmentID } };
+                Log.Fatal(ex, $"Assignment ID: {assignmentID} EXCEPTION!");
             }
             finally
             {
-                
+
             }
 
-            return job_response;
+            return jobResponse;
         }
 
         private void ConsultationInformation(DataSet dsCPOData)
@@ -142,11 +152,11 @@ namespace SassieAssignmentImport
 
             foreach (var item in QuestionMapping.consultation_mapping)
             {
-                _inspection_data.Add(item.Value, dsCPOData.Tables[0].Rows[0][item.Key].ToString());
+                _inspectionData.Add(item.Value, dsCPOData.Tables[0].Rows[0][item.Key].ToString());
             }
 
-            _inspection_data.Add("question_1", Convert.ToDateTime(dsCPOData.Tables[0].Rows[0]["Audit_Date"]).ToString("yyyy-MM-dd"));
-            _inspection_data.Add("question_21", Convert.ToDateTime(dsCPOData.Tables[0].Rows[0]["Audit_Date"]).ToShortTimeString());
+            _inspectionData.Add("question_1", Convert.ToDateTime(dsCPOData.Tables[0].Rows[0]["Audit_Date"]).ToString("yyyy-MM-dd"));
+            _inspectionData.Add("question_21", Convert.ToDateTime(dsCPOData.Tables[0].Rows[0]["Audit_Date"]).ToShortTimeString());
 
         }
 
@@ -154,7 +164,7 @@ namespace SassieAssignmentImport
         {
             foreach (var item in QuestionMapping.dealer_mapping)
             {
-                _inspection_data.Add(item.Value, dsCPOData.Tables[0].Rows[0][item.Key].ToString());
+                _inspectionData.Add(item.Value, dsCPOData.Tables[0].Rows[0][item.Key].ToString());
             }
 
         }
@@ -202,7 +212,7 @@ namespace SassieAssignmentImport
                 vin_num = pair.Key;
                 q_mapping = _postsale_list[ind];
 
-                _inspection_data.Add(q_mapping[ind], "Yes");
+                _inspectionData.Add(q_mapping[ind], "Yes");
 
                 foreach (var item in QuestionMapping.vehicle_detail)
                 {
@@ -211,7 +221,7 @@ namespace SassieAssignmentImport
                         continue;
                     }
 
-                    _inspection_data.Add(q_mapping[item.Key], pair.Value[item.Value].Trim());
+                    _inspectionData.Add(q_mapping[item.Key], pair.Value[item.Value].Trim());
                 }
 
                 foreach (DataRow row in dsCPOData.Tables[3].Rows)
@@ -225,7 +235,7 @@ namespace SassieAssignmentImport
 
                     value = ChangeNotApplicableText(value);
 
-                    _inspection_data.Add(q_mapping[qid], value);
+                    _inspectionData.Add(q_mapping[qid], value);
 
                     if (!value.ToLower().Equals("yes"))
                     {
@@ -234,7 +244,7 @@ namespace SassieAssignmentImport
                             throw new Exception(string.Format("comments question missing for {0}!!", q_mapping[qid]));
                         }
 
-                        _inspection_data.Add(QuestionMapping.comments_mapping[q_mapping[qid]], "comments_dummy_test");
+                        _inspectionData.Add(QuestionMapping.comments_mapping[q_mapping[qid]], "comments_dummy_test");
                     }
 
                 }
@@ -256,7 +266,7 @@ namespace SassieAssignmentImport
 
                 q_mapping = _presale_list[ind];
 
-                _inspection_data.Add(q_mapping[ind], "Yes");
+                _inspectionData.Add(q_mapping[ind], "Yes");
 
                 foreach (var item in QuestionMapping.vehicle_detail)
                 {
@@ -265,7 +275,7 @@ namespace SassieAssignmentImport
                         continue;
                     }
 
-                    _inspection_data.Add(q_mapping[item.Key], pair.Value[item.Value].Trim());
+                    _inspectionData.Add(q_mapping[item.Key], pair.Value[item.Value].Trim());
                 }
 
                 foreach (DataRow row in dsCPOData.Tables[5].Rows)
@@ -279,7 +289,7 @@ namespace SassieAssignmentImport
 
                     value = ChangeNotApplicableText(value);
 
-                    _inspection_data.Add(q_mapping[qid], value);
+                    _inspectionData.Add(q_mapping[qid], value);
 
                     if (!value.ToLower().Equals("yes"))
                     {
@@ -288,7 +298,7 @@ namespace SassieAssignmentImport
                             throw new Exception(string.Format("comments question missing for {0}!!", q_mapping[qid]));
                         }
 
-                        _inspection_data.Add(QuestionMapping.comments_mapping[q_mapping[qid]], "comments_dummy_test");
+                        _inspectionData.Add(QuestionMapping.comments_mapping[q_mapping[qid]], "comments_dummy_test");
                     }
                 }
                 ind++;
@@ -308,7 +318,7 @@ namespace SassieAssignmentImport
                 {
                     continue;
                 }
-                _inspection_data.Add(QuestionMapping.facility_mapping[qid], QuestionMapping.objective[qval].Trim());
+                _inspectionData.Add(QuestionMapping.facility_mapping[qid], QuestionMapping.objective[qval].Trim());
             }
         }
 

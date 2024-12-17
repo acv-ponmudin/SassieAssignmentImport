@@ -1,11 +1,17 @@
 ﻿using Newtonsoft.Json;
+using System.Net;
 
-namespace SassieAssignmentImport
+namespace SassieAssignmentImport.DTO
 {
     internal class JobImportResponse
     {
+        public int AssignmentId { get; set; }
+
+        public HttpStatusCode Status { get; set; }
+        
         [JsonProperty("job_import")]
         public JobImport JobImport { get; set; }
+       
     }
 
     public class JobImport
@@ -17,8 +23,6 @@ namespace SassieAssignmentImport
         public string ClientLocationId { get; set; }
 
         [JsonProperty("job_id")]
-        public string JobId { get; set; }
-
-        public int AssignmentId { get; set; }
+        public object JobId { get; set; }
     }
 }

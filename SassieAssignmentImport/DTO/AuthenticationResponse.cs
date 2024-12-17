@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace SassieAssignmentImport
+namespace SassieAssignmentImport.DTO
 {
     internal class AuthenticationResponse
     {

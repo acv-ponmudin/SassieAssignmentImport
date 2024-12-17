@@ -25,10 +25,10 @@ namespace SassieAssignmentImport
 
                 dsResult = SqlHelper.ExecuteDataset(WebAppsConnection, CommandType.StoredProcedure, "usp_UDA_OnlineConsultationReport_HondaCPO_Sassie", objParameter);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
-                throw new Exception(ex.ToString());
+                throw;
             }
             finally
             {
