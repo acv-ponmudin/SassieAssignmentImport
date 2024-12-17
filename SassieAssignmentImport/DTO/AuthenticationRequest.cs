@@ -1,9 +1,16 @@
-﻿namespace SassieAssignmentImport.DTO
+﻿using Newtonsoft.Json;
+
+namespace SassieAssignmentImport.DTO
 {
     internal class AuthenticationRequest
     {
-        public string grant_type { get; set; }
-        public string client_id { get; set; }
-        public string client_secret { get; set; }
+        [JsonProperty("grant_type")]
+        public string GrantType { get; set; }
+
+        [JsonProperty("client_id")]
+        public string ClientId { get; set; }
+
+        [JsonProperty("client_secret")]
+        public string ClientSecret { get; set; }
     }
 }

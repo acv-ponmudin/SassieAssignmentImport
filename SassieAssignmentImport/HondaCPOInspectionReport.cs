@@ -3,7 +3,6 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SassieAssignmentImport
@@ -54,13 +53,17 @@ namespace SassieAssignmentImport
             JobImportResponse[] jobImportResponses = null;
             try
             {
+                Log.Information("Sassie Authentication In-Progress...");
                 var authRequest = new AuthenticationRequest
                 {
-                    grant_type = GRANT_TYPE,
-                    client_id = CLIENT_ID,
-                    client_secret = CLIENT_SECRET
+                    GrantType = GRANT_TYPE,
+                    ClientId = CLIENT_ID,
+                    ClientSecret = CLIENT_SECRET
                 };
                 var authResponse = await _sassieApi.AuthenticateAsync(authRequest);
+
+                if (authResponse == null)
+                    return;
 
                 var importList = new List<Task<JobImportResponse>>();
                 foreach (int assignmentID in assignments)
@@ -69,10 +72,6 @@ namespace SassieAssignmentImport
                 }
 
                 jobImportResponses = await Task.WhenAll(importList);
-            }
-            catch (Exception ex)
-            {
-                Log.Fatal(ex, "EXCEPTION!");
             }
             finally
             {
@@ -88,8 +87,6 @@ namespace SassieAssignmentImport
         public async Task<JobImportResponse> ImportSingleAssignmentAsync(int assignmentID, string token)
         {
             JobImportResponse jobResponse = null;
-            string surveyID = "";
-            string clientLocationID = "";
             try
             {
                 Log.Information($"Processing Assignment ID: {assignmentID}");
@@ -99,8 +96,8 @@ namespace SassieAssignmentImport
                 var divisionCode = dsCPOData.Tables[0].Rows[0]["Division_Code"].ToString().Trim();
                 //HONDA:: 1039
                 //ACURA:: 1061
-                surveyID = divisionCode != "B" ? "1039" : "1061";
-                clientLocationID = dsCPOData.Tables[0].Rows[0]["Dealer_Code"].ToString().Trim();
+                string surveyID = divisionCode != "B" ? "1039" : "1061";
+                string clientLocationID = dsCPOData.Tables[0].Rows[0]["Dealer_Code"].ToString().Trim();
 
                 //1. Consultation information 
                 //2. Dealer information 
@@ -138,10 +135,6 @@ namespace SassieAssignmentImport
             catch (Exception ex)
             {
                 Log.Fatal(ex, $"Assignment ID: {assignmentID} EXCEPTION!");
-            }
-            finally
-            {
-
             }
 
             return jobResponse;
