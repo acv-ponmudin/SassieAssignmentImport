@@ -1,16 +1,18 @@
 ﻿using SassieAssignmentImport.DTO;
+using SassieAssignmentImport.Services;
+using SassieAssignmentImport.Utilities;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 
-namespace SassieAssignmentImport
+namespace SassieAssignmentImport.Controllers
 {
-    internal class HondaCPOInspectionReport
+    internal class AssignmentImportController
     {
-        private readonly DBHondaCPO _dbHondaCPO;
-        private readonly SassieApi _sassieApi;
+        private readonly HondaCPOService _dbHondaCPO;
+        private readonly SassieApiService _sassieApi;
         private List<Dictionary<int, string>> _presale_list = new List<Dictionary<int, string>>();
         private List<Dictionary<int, string>> _postsale_list = new List<Dictionary<int, string>>();
         private Dictionary<string, Dictionary<string, string>> _presale_vehicles = new Dictionary<string, Dictionary<string, string>>();
@@ -20,10 +22,10 @@ namespace SassieAssignmentImport
         private readonly string CLIENT_ID = "WSwDiUqqv5Q2InctWBHkWeTWmDmfiNJl";
         private readonly string CLIENT_SECRET = "62UEIr61r2FQc9xyvRn4PBdmRQ4gTPwa";
 
-        public HondaCPOInspectionReport()
+        public AssignmentImportController()
         {
-            _sassieApi = new SassieApi();
-            _dbHondaCPO = new DBHondaCPO();
+            _sassieApi = new SassieApiService();
+            _dbHondaCPO = new HondaCPOService();
 
             _presale_list.Add(QuestionMapping.presale_mappingA);
             _presale_list.Add(QuestionMapping.presale_mappingB);

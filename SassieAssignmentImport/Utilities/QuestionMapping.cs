@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SassieAssignmentImport
+namespace SassieAssignmentImport.Utilities
 {
     static class QuestionMapping
     {

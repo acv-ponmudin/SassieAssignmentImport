@@ -114,14 +114,14 @@
   <ItemGroup>
     <Compile Include="DTO\AuthenticationRequest.cs" />
     <Compile Include="DTO\AuthenticationResponse.cs" />
-    <Compile Include="DBHondaCPO.cs" />
-    <Compile Include="HondaCPOInspectionReport.cs" />
+    <Compile Include="Services\HondaCPOService.cs" />
+    <Compile Include="Controllers\AssignmentImportController.cs" />
     <Compile Include="DTO\JobImportRequest.cs" />
     <Compile Include="DTO\JobImportResponse.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QuestionMapping.cs" />
-    <Compile Include="SassieApi.cs" />
+    <Compile Include="Utilities\QuestionMapping.cs" />
+    <Compile Include="Services\SassieApiService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

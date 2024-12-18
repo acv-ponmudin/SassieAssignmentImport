@@ -6,13 +6,13 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
-namespace SassieAssignmentImport
+namespace SassieAssignmentImport.Services
 {
-    class SassieApi
+    class SassieApiService
     {
         private readonly HttpClient _client;
 
-        public SassieApi()
+        public SassieApiService()
         {
             _client = new HttpClient
             {

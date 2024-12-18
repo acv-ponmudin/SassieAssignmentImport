@@ -2,12 +2,12 @@
 using System.Data;
 using System.Data.SqlClient;
 
-namespace SassieAssignmentImport
+namespace SassieAssignmentImport.Services
 {
     /// <summary>
     /// Honda CPO specific DB activities
     /// </summary>
-    public class DBHondaCPO
+    public class HondaCPOService
     {
         public DataSet GetHondaCPOOCR(int assignment_id)
         {

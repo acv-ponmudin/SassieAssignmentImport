@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using SassieAssignmentImport.Controllers;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -23,7 +24,7 @@ namespace SassieAssignmentImport
                 assignmentID = 26224446;//with comments
 
                 List<int> assignments = new List<int>() { assignmentID , 22790360 };
-                await new HondaCPOInspectionReport().ImportAssignmentsAsync(assignments);
+                await new AssignmentImportController().ImportAssignmentsAsync(assignments);
             }
             catch (Exception ex)
             {
