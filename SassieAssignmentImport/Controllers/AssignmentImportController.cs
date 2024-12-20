@@ -202,6 +202,7 @@ namespace SassieAssignmentImport.Controllers
             int qid;
             int ind = 0;
             string value;
+            string comments;
             foreach (var pair in _postsale_vehicles)
             {
                 vin_num = pair.Key;
@@ -239,7 +240,9 @@ namespace SassieAssignmentImport.Controllers
                             throw new Exception(string.Format("comments question missing for {0}!!", q_mapping[qid]));
                         }
 
-                        _inspectionData.Add(QuestionMapping.comments_mapping[q_mapping[qid]], "comments_dummy_test");
+                        comments = GetComments(vin_num, qid, dsCPOData);
+
+                        _inspectionData.Add(QuestionMapping.comments_mapping[q_mapping[qid]], comments);
                     }
 
                 }
@@ -255,6 +258,7 @@ namespace SassieAssignmentImport.Controllers
             int qid;
             int ind = 0;
             string value;
+            string comments;
             foreach (var pair in _presale_vehicles)
             {
                 vin_num = pair.Key;
@@ -293,7 +297,9 @@ namespace SassieAssignmentImport.Controllers
                             throw new Exception(string.Format("comments question missing for {0}!!", q_mapping[qid]));
                         }
 
-                        _inspectionData.Add(QuestionMapping.comments_mapping[q_mapping[qid]], "comments_dummy_test");
+                        comments = GetComments(vin_num, qid, dsCPOData);
+
+                        _inspectionData.Add(QuestionMapping.comments_mapping[q_mapping[qid]], comments);
                     }
                 }
                 ind++;
@@ -320,6 +326,19 @@ namespace SassieAssignmentImport.Controllers
         private string ChangeNotApplicableText(string value)
         {
             return value.ToLower().Equals("na") ? "N/A" : value;
+        }
+
+        private string GetComments(string vin_num, int qid, DataSet dsCPOData)
+        {
+            string rowFilter = $"Vehicle_VIN = '{vin_num}' AND Question_ID = {qid}";
+            DataRow[] matchRows = dsCPOData.Tables[8].Select(rowFilter);
+            string comments = "";
+            if (matchRows != null && matchRows.Length > 0)
+            {
+                comments = matchRows[0]["Question_Comments"].ToString();
+            }
+
+            return comments;
         }
     }
 }
