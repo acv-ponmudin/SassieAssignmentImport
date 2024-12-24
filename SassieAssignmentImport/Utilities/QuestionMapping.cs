@@ -36,6 +36,7 @@ namespace SassieAssignmentImport.Utilities
              { 24104,"question_201" }
         };
 
+        //PRE-SALE
         public static Dictionary<int, string> presale_mappingA = new Dictionary<int, string>()
         {
             { 0,"question_291" },
@@ -87,7 +88,13 @@ namespace SassieAssignmentImport.Utilities
             {22913,"question_1991"},
             {22914,"question_1881"},
             {22807,"question_1511"},
-            {22808,"question_1571"}
+            {22808,"question_1571"},
+            {5000,  "question_1911"},
+            {5200,  "question_1921"},
+            {5100,  "question_1931"},
+            {5300,  "question_1941"},
+            {5400,  "question_1951"},
+            {5500,  "question_1981"},
         };
         public static Dictionary<int, string> presale_mappingB = new Dictionary<int, string>()
         {
@@ -140,7 +147,13 @@ namespace SassieAssignmentImport.Utilities
             {22913,"question_8671"},
             {22914,"question_8701"},
             {22807,"question_8311"},
-            {22808,"question_8371"}
+            {22808,"question_8371"},
+            {5000, "question_8741"},
+            {5200, "question_8751"},
+            {5100, "question_8761"},
+            {5300, "question_8771"},
+            {5400, "question_8781"},
+            {5500, "question_8791"},
         };
         public static Dictionary<int, string> presale_mappingC = new Dictionary<int, string>()
         {
@@ -193,7 +206,13 @@ namespace SassieAssignmentImport.Utilities
             {22913, "question_7171"},
             {22914, "question_7201"},
             {22807, "question_6811"},
-            {22808, "question_6871"}
+            {22808, "question_6871"},
+            {5000, "question_7241"},
+            {5200, "question_7251"},
+            {5100, "question_7261"},
+            {5300, "question_7271"},
+            {5400, "question_7281"},
+            {5500, "question_7291"},
         };
         public static Dictionary<int, string> presale_mappingD = new Dictionary<int, string>()
         {
@@ -246,7 +265,13 @@ namespace SassieAssignmentImport.Utilities
             { 22913, "question_4151"},
             { 22914, "question_4181"},
             { 22807, "question_3791"},
-            { 22808, "question_3851"}
+            { 22808, "question_3851"},
+            {5000, "question_4221"},
+            {5200, "question_4231"},
+            {5100, "question_4241"},
+            {5300, "question_4251"},
+            {5400, "question_4261"},
+            {5500, "question_4271"},
         };
         public static Dictionary<int, string> presale_mappingE = new Dictionary<int, string>() {
             { 4,"question_20051" },
@@ -298,7 +323,13 @@ namespace SassieAssignmentImport.Utilities
             {22913, "question_16171"},
             {22914, "question_16201"},
             {22807, "question_15811"},
-            {22808, "question_15871"}
+            {22808, "question_15871"},
+            {5000, "question_16241"},
+            {5200, "question_16251"},
+            {5100, "question_16261"},
+            {5300, "question_16271"},
+            {5400, "question_16281"},
+            {5500, "question_16291"},
         };
         public static Dictionary<int, string> presale_mappingF = new Dictionary<int, string>() {
             { 5,"question_20061" },
@@ -350,7 +381,13 @@ namespace SassieAssignmentImport.Utilities
             {22913, "question_14671"},
             {22914, "question_14701"},
             {22807, "question_14311"},
-            {22808, "question_14371"}
+            {22808, "question_14371"},
+            {5000, "question_14741"},
+            {5200, "question_14751"},
+            {5100, "question_14761"},
+            {5300, "question_14771"},
+            {5400, "question_14781"},
+            {5500, "question_14791"},
         };
         public static Dictionary<int, string> presale_mappingG = new Dictionary<int, string>() {
             { 6,"question_20071" },
@@ -402,7 +439,13 @@ namespace SassieAssignmentImport.Utilities
             {22913, "question_13171"},
             {22914, "question_13201"},
             {22807, "question_12811"},
-            {22808, "question_12871"}
+            {22808, "question_12871"},
+            {5000, "question_13241"},
+            {5200, "question_13251"},
+            {5100, "question_13261"},
+            {5300, "question_13271"},
+            {5400, "question_13281"},
+            {5500, "question_13291"},
         };
         public static Dictionary<int, string> presale_mappingH = new Dictionary<int, string>() {
             { 7,"question_20081" },
@@ -454,7 +497,13 @@ namespace SassieAssignmentImport.Utilities
             {22913, "question_11671"},
             {22914, "question_11701"},
             {22807, "question_11311"},
-            {22808, "question_11371"}
+            {22808, "question_11371"},
+            {5000, "question_11741"},
+            {5200, "question_11751"},
+            {5100, "question_11761"},
+            {5300, "question_11771"},
+            {5400, "question_11781"},
+            {5500, "question_11791"},
         };
         public static Dictionary<int, string> presale_mappingI = new Dictionary<int, string>() {
             { 8,"question_20091" },
@@ -506,7 +555,13 @@ namespace SassieAssignmentImport.Utilities
             {22913, "question_5671"},
             {22914, "question_5701"},
             {22807, "question_5311"},
-            {22808, "question_5371"}
+            {22808, "question_5371"},
+            {5000, "question_5741"},
+            {5200, "question_5751"},
+            {5100, "question_5761"},
+            {5300, "question_5771"},
+            {5400, "question_5781"},
+            {5500, "question_5791"},
         };
         public static Dictionary<int, string> presale_mappingJ = new Dictionary<int, string>() {
             { 9,"question_20101" },
@@ -558,9 +613,16 @@ namespace SassieAssignmentImport.Utilities
             {22913, "question_10171"},
             {22914, "question_10201"},
             {22807, "question_9811"},
-            {22808, "question_9871"}
+            {22808, "question_9871"},
+            {5000, "question_10241"},
+            {5200, "question_10251"},
+            {5100, "question_10261"},
+            {5300, "question_10271"},
+            {5400, "question_10281"},
+            {5500, "question_10291"},
         };
 
+        //POST-SALE
         public static Dictionary<int, string> postsale_mappingA = new Dictionary<int, string>() {
             { 0,"question_2031" },
             { 999000,"question_2041" },

@@ -47,7 +47,6 @@ namespace SassieAssignmentImport.Services
 
         public async Task<JobImportResponse> ImportJobAsync(JobImportRequest request)
         {
-            JobImportResponse jobResponse = null;
             string jsonData = JsonConvert.SerializeObject(request.Data); // Serialize to JSON
             StringContent content = new StringContent(jsonData, System.Text.Encoding.UTF8, "application/json");
 
@@ -57,6 +56,7 @@ namespace SassieAssignmentImport.Services
             //response.EnsureSuccessStatusCode();
             string responseData = await response.Content.ReadAsStringAsync();
 
+            JobImportResponse jobResponse;
             if (response.IsSuccessStatusCode)
             {
                 jobResponse = JsonConvert.DeserializeObject<JobImportResponse>(responseData);

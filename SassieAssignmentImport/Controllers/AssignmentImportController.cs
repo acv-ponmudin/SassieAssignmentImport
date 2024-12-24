@@ -21,6 +21,7 @@ namespace SassieAssignmentImport.Controllers
         private readonly string GRANT_TYPE = "client_credentials";
         private readonly string CLIENT_ID = "WSwDiUqqv5Q2InctWBHkWeTWmDmfiNJl";
         private readonly string CLIENT_SECRET = "62UEIr61r2FQc9xyvRn4PBdmRQ4gTPwa";
+        private readonly string IMAGE_ROOTPATH = "https://cpo.true360.com/FileServer-Images";
 
         public AssignmentImportController()
         {
@@ -197,12 +198,10 @@ namespace SassieAssignmentImport.Controllers
 
         private void PopulatePostsaleQuestions(DataSet dsCPOData)
         {
-            string vin_num;
-            Dictionary<int, string> q_mapping;
             int qid;
             int ind = 0;
-            string value;
-            string comments;
+            string vin_num, value, comments;
+            Dictionary<int, string> q_mapping;
             foreach (var pair in _postsale_vehicles)
             {
                 vin_num = pair.Key;
@@ -253,12 +252,10 @@ namespace SassieAssignmentImport.Controllers
 
         private void PopulatePresaleQuestions(DataSet dsCPOData)
         {
-            string vin_num;
-            Dictionary<int, string> q_mapping;
-            int qid;
+            int qid, imgNum;
             int ind = 0;
-            string value;
-            string comments;
+            string vin_num, value, comments, imgFile;
+            Dictionary<int, string> q_mapping;
             foreach (var pair in _presale_vehicles)
             {
                 vin_num = pair.Key;
@@ -267,6 +264,7 @@ namespace SassieAssignmentImport.Controllers
 
                 _inspectionData.Add(q_mapping[ind], "Yes");
 
+                //Vehicle detail
                 foreach (var item in QuestionMapping.vehicle_detail)
                 {
                     if (!q_mapping.ContainsKey(item.Key))
@@ -277,6 +275,7 @@ namespace SassieAssignmentImport.Controllers
                     _inspectionData.Add(q_mapping[item.Key], pair.Value[item.Value].Trim());
                 }
 
+                //Consultation
                 foreach (DataRow row in dsCPOData.Tables[5].Rows)
                 {
                     qid = (int)row["Question_ID"];
@@ -302,9 +301,30 @@ namespace SassieAssignmentImport.Controllers
                         _inspectionData.Add(QuestionMapping.comments_mapping[q_mapping[qid]], comments);
                     }
                 }
+
+                //Pre-sale Images
+                string rowFilter = $"Vehicle_VIN = '{vin_num}'";
+                DataRow[] matchRows = dsCPOData.Tables[4].Select(rowFilter);
+                if (matchRows == null)
+                {
+                    ind++;
+                    continue;
+                }
+
+                foreach (DataRow row in matchRows)
+                {
+                    imgNum = (int)row["Image_SeqNumber"];
+                    if (!q_mapping.ContainsKey(imgNum))
+                    {
+                        continue;
+                    }
+
+                    imgFile = $"{IMAGE_ROOTPATH}{row["ImageFile"].ToString().Replace("\\", "/")}";
+
+                    _inspectionData.Add(q_mapping[imgNum], imgFile);
+                }
                 ind++;
             }
-
         }
 
         private void FacilityInspection(DataSet dsCPOData)
