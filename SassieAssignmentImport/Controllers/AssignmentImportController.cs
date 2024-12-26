@@ -252,9 +252,9 @@ namespace SassieAssignmentImport.Controllers
 
         private void PopulatePresaleQuestions(DataSet dsCPOData)
         {
-            int qid, imgNum;
+            int qid;
             int ind = 0;
-            string vin_num, value, comments, imgFile;
+            string vin_num, value, comments;
             Dictionary<int, string> q_mapping;
             foreach (var pair in _presale_vehicles)
             {
@@ -303,27 +303,35 @@ namespace SassieAssignmentImport.Controllers
                 }
 
                 //Pre-sale Images
-                string rowFilter = $"Vehicle_VIN = '{vin_num}'";
-                DataRow[] matchRows = dsCPOData.Tables[4].Select(rowFilter);
-                if (matchRows == null)
+                AddPresaleImages(vin_num, dsCPOData, q_mapping);
+                
+                ind++;
+            }
+        }
+
+        private void AddPresaleImages(string vin_num, DataSet dsCPOData, Dictionary<int, string> q_mapping)
+        {
+            int imgNum;
+            string imgFile;
+
+            string rowFilter = $"Vehicle_VIN = '{vin_num}'";
+            DataRow[] matchRows = dsCPOData.Tables[4].Select(rowFilter);
+            if (matchRows == null)
+            {
+                return;
+            }
+
+            foreach (DataRow row in matchRows)
+            {
+                imgNum = (int)row["Image_SeqNumber"];
+                if (!q_mapping.ContainsKey(imgNum))
                 {
-                    ind++;
                     continue;
                 }
 
-                foreach (DataRow row in matchRows)
-                {
-                    imgNum = (int)row["Image_SeqNumber"];
-                    if (!q_mapping.ContainsKey(imgNum))
-                    {
-                        continue;
-                    }
+                imgFile = $"{IMAGE_ROOTPATH}{row["ImageFile"].ToString().Replace("\\", "/")}";
 
-                    imgFile = $"{IMAGE_ROOTPATH}{row["ImageFile"].ToString().Replace("\\", "/")}";
-
-                    _inspectionData.Add(q_mapping[imgNum], imgFile);
-                }
-                ind++;
+                _inspectionData.Add(q_mapping[imgNum], imgFile);
             }
         }
 
