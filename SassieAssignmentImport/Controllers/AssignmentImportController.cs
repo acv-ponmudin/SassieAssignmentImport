@@ -198,10 +198,10 @@ namespace SassieAssignmentImport.Controllers
 
         private void PopulatePostsaleQuestions(DataSet dsCPOData)
         {
-            int qid;
             int ind = 0;
-            string vin_num, value, comments;
+            string vin_num;
             Dictionary<int, string> q_mapping;
+
             foreach (var pair in _postsale_vehicles)
             {
                 vin_num = pair.Key;
@@ -209,42 +209,12 @@ namespace SassieAssignmentImport.Controllers
 
                 _inspectionData.Add(q_mapping[ind], "Yes");
 
-                foreach (var item in QuestionMapping.vehicle_detail)
-                {
-                    if (!q_mapping.ContainsKey(item.Key))
-                    {
-                        continue;
-                    }
+                //Vehicle detail
+                AddVehicleDetail(q_mapping, pair.Value);
 
-                    _inspectionData.Add(q_mapping[item.Key], pair.Value[item.Value].Trim());
-                }
+                //Consultation
+                AddConsultationData(dsCPOData, 3, vin_num, q_mapping);//tableIndex=3 for Post-sale data 
 
-                foreach (DataRow row in dsCPOData.Tables[3].Rows)
-                {
-                    qid = (int)row["Question_ID"];
-                    value = row[vin_num].ToString().Trim();
-                    if (!q_mapping.ContainsKey(qid))
-                    {
-                        continue;
-                    }
-
-                    value = ChangeNotApplicableText(value);
-
-                    _inspectionData.Add(q_mapping[qid], value);
-
-                    if (!value.ToLower().Equals("yes"))
-                    {
-                        if (!QuestionMapping.comments_mapping.ContainsKey(q_mapping[qid]))
-                        {
-                            throw new Exception(string.Format("comments question missing for {0}!!", q_mapping[qid]));
-                        }
-
-                        comments = GetComments(vin_num, qid, dsCPOData);
-
-                        _inspectionData.Add(QuestionMapping.comments_mapping[q_mapping[qid]], comments);
-                    }
-
-                }
                 ind++;
             }
 
@@ -252,60 +222,69 @@ namespace SassieAssignmentImport.Controllers
 
         private void PopulatePresaleQuestions(DataSet dsCPOData)
         {
-            int qid;
             int ind = 0;
-            string vin_num, value, comments;
+            string vin_num;
             Dictionary<int, string> q_mapping;
+
             foreach (var pair in _presale_vehicles)
             {
                 vin_num = pair.Key;
-
                 q_mapping = _presale_list[ind];
 
                 _inspectionData.Add(q_mapping[ind], "Yes");
 
                 //Vehicle detail
-                foreach (var item in QuestionMapping.vehicle_detail)
-                {
-                    if (!q_mapping.ContainsKey(item.Key))
-                    {
-                        continue;
-                    }
-
-                    _inspectionData.Add(q_mapping[item.Key], pair.Value[item.Value].Trim());
-                }
+                AddVehicleDetail(q_mapping, pair.Value);
 
                 //Consultation
-                foreach (DataRow row in dsCPOData.Tables[5].Rows)
-                {
-                    qid = (int)row["Question_ID"];
-                    value = row[vin_num].ToString().Trim();
-                    if (!q_mapping.ContainsKey(qid))
-                    {
-                        continue;
-                    }
-
-                    value = ChangeNotApplicableText(value);
-
-                    _inspectionData.Add(q_mapping[qid], value);
-
-                    if (!value.ToLower().Equals("yes"))
-                    {
-                        if (!QuestionMapping.comments_mapping.ContainsKey(q_mapping[qid]))
-                        {
-                            throw new Exception(string.Format("comments question missing for {0}!!", q_mapping[qid]));
-                        }
-
-                        comments = GetComments(vin_num, qid, dsCPOData);
-
-                        _inspectionData.Add(QuestionMapping.comments_mapping[q_mapping[qid]], comments);
-                    }
-                }
+                AddConsultationData(dsCPOData, 5, vin_num, q_mapping);//tableIndex=5 for Pre-sale data 
 
                 //Pre-sale Images
                 AddPresaleImages(vin_num, dsCPOData, q_mapping);
-                
+
                 ind++;
+            }
+        }
+
+        private void AddVehicleDetail(Dictionary<int, string> q_mapping, Dictionary<string, string> pairValue)
+        {
+            foreach (var item in QuestionMapping.vehicle_detail)
+            {
+                if (!q_mapping.ContainsKey(item.Key))
+                {
+                    continue;
+                }
+
+                _inspectionData.Add(q_mapping[item.Key], pairValue[item.Value].Trim());
+            }
+        }
+
+        private void AddConsultationData(DataSet dsCPOData, int tableIndex, string vin_num, Dictionary<int, string> q_mapping)
+        {
+            int qid;
+            string value, comments;
+
+            foreach (DataRow row in dsCPOData.Tables[tableIndex].Rows)
+            {
+                qid = (int)row["Question_ID"];
+                value = row[vin_num].ToString().Trim();
+                if (!q_mapping.ContainsKey(qid))
+                {
+                    continue;
+                }
+                value = ChangeNotApplicableText(value);
+
+                _inspectionData.Add(q_mapping[qid], value);
+
+                if (!value.ToLower().Equals("yes"))
+                {
+                    if (!QuestionMapping.comments_mapping.ContainsKey(q_mapping[qid]))
+                    {
+                        throw new Exception(string.Format("comments question missing for {0}!!", q_mapping[qid]));
+                    }
+                    comments = GetComments(vin_num, qid, dsCPOData);
+                    _inspectionData.Add(QuestionMapping.comments_mapping[q_mapping[qid]], comments);
+                }
             }
         }
 
