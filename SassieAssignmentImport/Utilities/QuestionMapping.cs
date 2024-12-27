@@ -33,7 +33,10 @@ namespace SassieAssignmentImport.Utilities
             { 24101,"question_141" },
             { 24102,"question_161" },
             { 24103,"question_181" },
-             { 24104,"question_201" }
+             { 24104,"question_201" },
+              { 8000,"question_221" },
+             { 8100,"question_231" },
+            { 8200,"question_241" }
         };
 
         //PRE-SALE

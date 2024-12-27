@@ -99,7 +99,7 @@ namespace SassieAssignmentImport.Controllers
                 var divisionCode = dsCPOData.Tables[0].Rows[0]["Division_Code"].ToString().Trim();
                 //HONDA:: 1039
                 //ACURA:: 1061
-                string surveyID = divisionCode != "B" ? "1039" : "1061";
+                string surveyID = divisionCode == "A" ? "1039" : "1061";
                 string clientLocationID = dsCPOData.Tables[0].Rows[0]["Dealer_Code"].ToString().Trim();
 
                 //1. Consultation information 
@@ -327,6 +327,27 @@ namespace SassieAssignmentImport.Controllers
                     continue;
                 }
                 _inspectionData.Add(QuestionMapping.facility_mapping[qid], QuestionMapping.objective[qval].Trim());
+            }
+
+            AddFacilityImages(dsCPOData);
+        }
+
+        private void AddFacilityImages(DataSet dsCPOData)
+        {
+            int imgNum;
+            string imgFile;
+
+            foreach (DataRow row in dsCPOData.Tables[7].Rows)
+            {
+                imgNum = (int)row["Image_SeqNumber"];
+                if (!QuestionMapping.facility_mapping.ContainsKey(imgNum))
+                {
+                    continue;
+                }
+
+                imgFile = $"{IMAGE_ROOTPATH}{row["ImageFile"].ToString().Replace("\\", "/")}";
+
+                _inspectionData.Add(QuestionMapping.facility_mapping[imgNum], imgFile);
             }
         }
 
