@@ -7,7 +7,7 @@ namespace SassieAssignmentImport.DTO
     {
         public int AssignmentId { get; set; }
 
-        public HttpStatusCode Status { get; set; }
+        public HttpStatusCode? Status { get; set; }
         
         [JsonProperty("job_import")]
         public JobImport JobImport { get; set; }

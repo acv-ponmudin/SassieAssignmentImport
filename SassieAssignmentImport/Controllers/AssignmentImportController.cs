@@ -11,22 +11,25 @@ namespace SassieAssignmentImport.Controllers
 {
     internal class AssignmentImportController
     {
-        private readonly HondaCPOService _dbHondaCPO;
-        private readonly SassieApiService _sassieApi;
-        private List<Dictionary<int, string>> _presale_list = new List<Dictionary<int, string>>();
-        private List<Dictionary<int, string>> _postsale_list = new List<Dictionary<int, string>>();
-        private Dictionary<string, Dictionary<string, string>> _presale_vehicles = new Dictionary<string, Dictionary<string, string>>();
-        private Dictionary<string, Dictionary<string, string>> _postsale_vehicles = new Dictionary<string, Dictionary<string, string>>();
-        private Dictionary<string, string> _inspectionData = new Dictionary<string, string>();
         private readonly string GRANT_TYPE = "client_credentials";
         private readonly string CLIENT_ID = "WSwDiUqqv5Q2InctWBHkWeTWmDmfiNJl";
         private readonly string CLIENT_SECRET = "62UEIr61r2FQc9xyvRn4PBdmRQ4gTPwa";
         private readonly string IMAGE_ROOTPATH = "https://cpo.true360.com/FileServer-Images";
+        private readonly HondaCPOService _dbHondaCPO;
+        private readonly SassieApiService _sassieApi;
+        private Dictionary<string, Dictionary<string, string>> _presale_vehicles;
+        private Dictionary<string, Dictionary<string, string>> _postsale_vehicles;
+        private Dictionary<string, string> _inspectionData;
+        private List<Dictionary<int, string>> _presale_list;
+        private List<Dictionary<int, string>> _postsale_list;
 
         public AssignmentImportController()
         {
-            _sassieApi = new SassieApiService();
             _dbHondaCPO = new HondaCPOService();
+            _sassieApi = new SassieApiService();
+
+            _presale_list = new List<Dictionary<int, string>>();
+            _postsale_list = new List<Dictionary<int, string>>();
 
             _presale_list.Add(QuestionMapping.presale_mappingA);
             _presale_list.Add(QuestionMapping.presale_mappingB);
@@ -89,7 +92,7 @@ namespace SassieAssignmentImport.Controllers
 
         public async Task<JobImportResponse> ImportSingleAssignmentAsync(int assignmentID, string token)
         {
-            JobImportResponse jobResponse = null;
+            JobImportResponse jobResponse;
             try
             {
                 Log.Information($"Processing Assignment ID: {assignmentID}");
@@ -138,6 +141,7 @@ namespace SassieAssignmentImport.Controllers
             catch (Exception ex)
             {
                 Log.Fatal(ex, $"Assignment ID: {assignmentID} EXCEPTION!");
+                jobResponse = new JobImportResponse { AssignmentId = assignmentID };
             }
 
             return jobResponse;
@@ -322,7 +326,7 @@ namespace SassieAssignmentImport.Controllers
             {
                 qid = (int)row["Question_ID"];
                 qval = (int)row["Question_Value"];
-                if (!QuestionMapping.facility_mapping.ContainsKey(qid))
+                if (!QuestionMapping.facility_mapping.ContainsKey(qid) || !QuestionMapping.objective.ContainsKey(qval))
                 {
                     continue;
                 }

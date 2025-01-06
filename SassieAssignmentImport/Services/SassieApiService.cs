@@ -21,6 +21,7 @@ namespace SassieAssignmentImport.Services
             _client.DefaultRequestHeaders.Accept.Clear();
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             _client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("2sgstrans", "1.0"));
+            _client.Timeout = TimeSpan.FromMinutes(60);
         }
 
         public async Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest data)
