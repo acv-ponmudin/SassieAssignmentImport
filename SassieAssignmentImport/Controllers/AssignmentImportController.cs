@@ -15,6 +15,7 @@ namespace SassieAssignmentImport.Controllers
         private readonly string CLIENT_ID = "WSwDiUqqv5Q2InctWBHkWeTWmDmfiNJl";
         private readonly string CLIENT_SECRET = "62UEIr61r2FQc9xyvRn4PBdmRQ4gTPwa";
         private readonly string IMAGE_ROOTPATH = "https://cpo.true360.com/FileServer-Images";
+        private readonly string DOC_ROOTPATH = "https://cpo.true360.com/FileServer-Documents";
         private readonly HondaCPOService _dbHondaCPO;
         private readonly SassieApiService _sassieApi;
         private Dictionary<string, Dictionary<string, string>> _presale_vehicles;
@@ -246,6 +247,9 @@ namespace SassieAssignmentImport.Controllers
                 //Pre-sale Images
                 AddPresaleImages(vin_num, dsCPOData, q_mapping);
 
+                //Documents
+                AddPresaleDocuments(vin_num, dsCPOData, q_mapping);
+
                 ind++;
             }
         }
@@ -315,6 +319,32 @@ namespace SassieAssignmentImport.Controllers
                 imgFile = $"{IMAGE_ROOTPATH}{row["ImageFile"].ToString().Replace("\\", "/")}";
 
                 _inspectionData.Add(q_mapping[imgNum], imgFile);
+            }
+        }
+
+        private void AddPresaleDocuments(string vin_num, DataSet dsCPOData, Dictionary<int, string> q_mapping)
+        {
+            int docType;
+            string docFile;
+
+            string rowFilter = $"Vehicle_VIN = '{vin_num}'";
+            DataRow[] matchRows = dsCPOData.Tables[10].Select(rowFilter);
+            if (matchRows == null)
+            {
+                return;
+            }
+
+            foreach (DataRow row in matchRows)
+            {
+                docType = ((int)row["Document_Type"]) * 100;//To keep the dict key unique
+                if (!q_mapping.ContainsKey(docType))
+                {
+                    continue;
+                }
+
+                docFile = $"{DOC_ROOTPATH}{row["DocumentFile"].ToString().Replace("\\", "/")}";
+
+                _inspectionData.Add(q_mapping[docType], docFile);
             }
         }
 
