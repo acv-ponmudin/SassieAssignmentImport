@@ -39,7 +39,7 @@ namespace SassieAssignmentImport.Utilities
             { 8200,"question_241" }
         };
 
-        //PRE-SALE
+        #region PRE-SALE
         public static Dictionary<int, string> presale_mappingA = new Dictionary<int, string>()
         {
             { 0,"question_291" },
@@ -664,8 +664,9 @@ namespace SassieAssignmentImport.Utilities
             {800, "question_9131"},
             {400, "question_9171"},
         };
+        #endregion
 
-        //POST-SALE
+        #region POST-SALE
         public static Dictionary<int, string> postsale_mappingA = new Dictionary<int, string>() {
             { 0,"question_2031" },
             { 999000,"question_2041" },
@@ -833,6 +834,7 @@ namespace SassieAssignmentImport.Utilities
             {21201, "question_19221"},
             {21202, "question_19251"}
         };
+        #endregion
 
         public static Dictionary<string, string> comments_mapping = new Dictionary<string, string>() {
             {   "question_141"  ,   "question_151"  },
