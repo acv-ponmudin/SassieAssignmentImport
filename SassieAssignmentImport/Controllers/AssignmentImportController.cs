@@ -220,6 +220,9 @@ namespace SassieAssignmentImport.Controllers
                 //Consultation
                 AddConsultationData(dsCPOData, 3, vin_num, q_mapping);//tableIndex=3 for Post-sale data 
 
+                //Documents
+                AddPostsaleDocuments(vin_num, dsCPOData, q_mapping);
+
                 ind++;
             }
 
@@ -329,6 +332,32 @@ namespace SassieAssignmentImport.Controllers
 
             string rowFilter = $"Vehicle_VIN = '{vin_num}'";
             DataRow[] matchRows = dsCPOData.Tables[10].Select(rowFilter);
+            if (matchRows == null)
+            {
+                return;
+            }
+
+            foreach (DataRow row in matchRows)
+            {
+                docType = ((int)row["Document_Type"]) * 100;//To keep the dict key unique
+                if (!q_mapping.ContainsKey(docType))
+                {
+                    continue;
+                }
+
+                docFile = $"{DOC_ROOTPATH}{row["DocumentFile"].ToString().Replace("\\", "/")}";
+
+                _inspectionData.Add(q_mapping[docType], docFile);
+            }
+        }
+
+        private void AddPostsaleDocuments(string vin_num, DataSet dsCPOData, Dictionary<int, string> q_mapping)
+        {
+            int docType;
+            string docFile;
+
+            string rowFilter = $"Vehicle_VIN = '{vin_num}'";
+            DataRow[] matchRows = dsCPOData.Tables[11].Select(rowFilter);
             if (matchRows == null)
             {
                 return;
