@@ -5,6 +5,9 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace SassieAssignmentImport.Controllers
@@ -23,6 +26,7 @@ namespace SassieAssignmentImport.Controllers
         private Dictionary<string, string> _inspectionData;
         private List<Dictionary<int, string>> _presale_list;
         private List<Dictionary<int, string>> _postsale_list;
+        private List<Dictionary<string, string>> records = new List<Dictionary<string, string>>();
 
         public AssignmentImportController()
         {
@@ -72,13 +76,15 @@ namespace SassieAssignmentImport.Controllers
                 if (authResponse == null)
                     return;
 
+                //Asynchronous for I/O bound
                 var importList = new List<Task<JobImportResponse>>();
                 foreach (int assignmentID in assignments)
                 {
                     importList.Add(ImportSingleAssignmentAsync(assignmentID, authResponse.AccessToken));
                 }
-
                 jobImportResponses = await Task.WhenAll(importList);
+
+                //CreateCSV();
             }
             finally
             {
@@ -128,6 +134,9 @@ namespace SassieAssignmentImport.Controllers
                 PopulatePresaleQuestions(dsCPOData);
                 FacilityInspection(dsCPOData);
 
+                //records.Add(_inspectionData);
+                //return new JobImportResponse();
+
                 var jobRequest = new JobImportRequest
                 {
                     AssignmentID = assignmentID,
@@ -146,6 +155,32 @@ namespace SassieAssignmentImport.Controllers
             }
 
             return jobResponse;
+        }
+
+        void CreateCSV()
+        {
+
+            // Get all unique keys across all dictionaries
+            var allKeys = records.SelectMany(dict => dict.Keys).Distinct().ToList();
+
+            // Specify CSV file path
+            string csvFilePath = "output.csv";
+
+            // Write to CSV
+            using (var writer = new StreamWriter(csvFilePath, false, Encoding.UTF8))
+            {
+                // Write the header
+                writer.WriteLine(string.Join(",", allKeys));
+
+                // Write each row
+                foreach (var record in records)
+                {
+                    var row = allKeys.Select(key => record.ContainsKey(key) ? record[key]?.ToString() : "").ToArray();
+                    writer.WriteLine(string.Join(",", row));
+                }
+            }
+
+            Console.WriteLine($"CSV file '{csvFilePath}' created successfully!");
         }
 
         private void ConsultationInformation(DataSet dsCPOData)
