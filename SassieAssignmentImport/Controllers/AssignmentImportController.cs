@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace SassieAssignmentImport.Controllers
 {
@@ -19,7 +20,7 @@ namespace SassieAssignmentImport.Controllers
         private readonly string CLIENT_SECRET = "62UEIr61r2FQc9xyvRn4PBdmRQ4gTPwa";
         private readonly string IMAGE_ROOTPATH = "https://cpo.true360.com/FileServer-Images";
         private readonly string DOC_ROOTPATH = "https://cpo.true360.com/FileServer-Documents";
-        private readonly HondaCPOService _dbHondaCPO;
+        private readonly HondaCPOService _hondaCPOService;
         private readonly SassieApiService _sassieApi;
         private Dictionary<string, Dictionary<string, string>> _presale_vehicles;
         private Dictionary<string, Dictionary<string, string>> _postsale_vehicles;
@@ -30,7 +31,7 @@ namespace SassieAssignmentImport.Controllers
 
         public AssignmentImportController()
         {
-            _dbHondaCPO = new HondaCPOService();
+            _hondaCPOService = new HondaCPOService();
             _sassieApi = new SassieApiService();
 
             _presale_list = new List<Dictionary<int, string>>();
@@ -59,9 +60,32 @@ namespace SassieAssignmentImport.Controllers
             _postsale_list.Add(QuestionMapping.postsale_mappingJ);
         }
 
-        public async Task ImportAssignmentsAsync(List<int> assignments)
+        public List<int> GetAssignments()
+        {
+            return _hondaCPOService.GetAssignments();
+        }
+
+        public void InsertSassieJob(List<JobImportResponse> jobImportResponses)
+        {
+            // Convert List to XML
+            XElement root = new XElement("Root",
+                jobImportResponses.Select(emp =>
+                    new XElement("Job",
+                        new XElement("assignment_id", emp.AssignmentId),
+                        new XElement("survey_id", emp.SurveyId),
+                        new XElement("client_location_id", emp.ClientLocationId),
+                        new XElement("job_id", emp.JobId)
+                    )
+                )
+            );
+
+            _hondaCPOService.InsertSassieJob(root.ToString());
+        }
+
+        public async Task<List<JobImportResponse>> ImportAssignmentsAsync(List<int> assignments)
         {
             JobImportResponse[] jobImportResponses = null;
+            List<JobImportResponse> success;
             try
             {
                 Log.Information("Sassie Authentication In-Progress...");
@@ -74,7 +98,7 @@ namespace SassieAssignmentImport.Controllers
                 var authResponse = await _sassieApi.AuthenticateAsync(authRequest);
 
                 if (authResponse == null)
-                    return;
+                    return null;
 
                 //Asynchronous for I/O bound
                 var importList = new List<Task<JobImportResponse>>();
@@ -85,6 +109,9 @@ namespace SassieAssignmentImport.Controllers
                 jobImportResponses = await Task.WhenAll(importList);
 
                 //CreateCSV();
+
+                success = jobImportResponses.Where(x => x.Status == System.Net.HttpStatusCode.Created).ToList();
+                var failed = jobImportResponses.Except(success);
             }
             finally
             {
@@ -95,6 +122,8 @@ namespace SassieAssignmentImport.Controllers
                     Log.Information($"RESULT::{Environment.NewLine}{json}");
                 }
             }
+
+            return success;
         }
 
         public async Task<JobImportResponse> ImportSingleAssignmentAsync(int assignmentID, string token)
@@ -104,7 +133,7 @@ namespace SassieAssignmentImport.Controllers
             {
                 Log.Information($"Processing Assignment ID: {assignmentID}");
 
-                var dsCPOData = _dbHondaCPO.GetHondaCPOOCR(assignmentID);
+                var dsCPOData = _hondaCPOService.GetHondaCPOOCR(assignmentID);
 
                 var divisionCode = dsCPOData.Tables[0].Rows[0]["Division_Code"].ToString().Trim();
                 //HONDA:: 1039

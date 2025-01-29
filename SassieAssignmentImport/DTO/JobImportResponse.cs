@@ -5,17 +5,12 @@ namespace SassieAssignmentImport.DTO
 {
     internal class JobImportResponse
     {
+        [JsonProperty("assignment_id")]
         public int AssignmentId { get; set; }
 
+        [JsonProperty("status")]
         public HttpStatusCode? Status { get; set; }
-        
-        [JsonProperty("job_import")]
-        public JobImport JobImport { get; set; }
-       
-    }
 
-    public class JobImport
-    {
         [JsonProperty("survey_id")]
         public string SurveyId { get; set; }
 
@@ -24,5 +19,6 @@ namespace SassieAssignmentImport.DTO
 
         [JsonProperty("job_id")]
         public object JobId { get; set; }
+
     }
 }

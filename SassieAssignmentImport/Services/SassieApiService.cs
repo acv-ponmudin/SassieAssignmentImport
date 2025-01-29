@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SassieAssignmentImport.DTO;
 using Serilog;
 using System;
@@ -60,8 +61,10 @@ namespace SassieAssignmentImport.Services
             JobImportResponse jobResponse;
             if (response.IsSuccessStatusCode)
             {
-                jobResponse = JsonConvert.DeserializeObject<JobImportResponse>(responseData);
-                Log.Information($"Assignment ID: {request.AssignmentID} job import SUCCESS! Job ID: {jobResponse.JobImport.JobId}");
+                //jobResponse = JsonConvert.DeserializeObject<JobImportResponse>(responseData);
+                JObject job_import = (JObject)JObject.Parse(responseData)["job_import"];
+                jobResponse = job_import.ToObject<JobImportResponse>();
+                Log.Information($"Assignment ID: {request.AssignmentID} job import SUCCESS! Job ID: {jobResponse.JobId}");
                 jobResponse.AssignmentId = request.AssignmentID;
                 jobResponse.Status = response.StatusCode;
             }
@@ -73,12 +76,9 @@ namespace SassieAssignmentImport.Services
                 {
                     AssignmentId = request.AssignmentID,
                     Status = response.StatusCode,
-                    JobImport = new JobImport
-                    {
-                        SurveyId = request.SurveyID,
-                        ClientLocationId = request.ClientLocationID,
-                        JobId = error
-                    }
+                    SurveyId = request.SurveyID,
+                    ClientLocationId = request.ClientLocationID,
+                    JobId = error
                 };
             }
 
