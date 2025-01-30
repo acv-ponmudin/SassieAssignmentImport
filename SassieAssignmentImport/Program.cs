@@ -62,7 +62,7 @@ namespace SassieAssignmentImport
                     if (success != null && success.Count > 0)
                     {
                         controller.InsertSassieJob(success);
-                        Log.Information($"Inserted [{success.Count}] job_ids to the database in batch-{i+1}.");
+                        Log.Information($"Inserted successful [{success.Count}] job_ids into the database in batch-{i+1}.");
                     }
 
                     break;

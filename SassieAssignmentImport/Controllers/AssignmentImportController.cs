@@ -15,6 +15,8 @@ namespace SassieAssignmentImport.Controllers
 {
     internal class AssignmentImportController
     {
+        #region Members
+        private static int _counter = 1;
         private readonly string GRANT_TYPE = "client_credentials";
         private readonly string CLIENT_ID = "WSwDiUqqv5Q2InctWBHkWeTWmDmfiNJl";
         private readonly string CLIENT_SECRET = "62UEIr61r2FQc9xyvRn4PBdmRQ4gTPwa";
@@ -28,7 +30,9 @@ namespace SassieAssignmentImport.Controllers
         private List<Dictionary<int, string>> _presale_list;
         private List<Dictionary<int, string>> _postsale_list;
         private List<Dictionary<string, string>> records = new List<Dictionary<string, string>>();
+        #endregion
 
+        #region Public Methods
         public AssignmentImportController()
         {
             _hondaCPOService = new HondaCPOService();
@@ -131,7 +135,7 @@ namespace SassieAssignmentImport.Controllers
             JobImportResponse jobResponse;
             try
             {
-                Log.Information($"Processing Assignment ID: {assignmentID}");
+                Log.Information($"{_counter++}) Processing Assignment ID: {assignmentID}");
 
                 var dsCPOData = _hondaCPOService.GetHondaCPOOCR(assignmentID);
 
@@ -187,7 +191,10 @@ namespace SassieAssignmentImport.Controllers
             return jobResponse;
         }
 
-        void CreateCSV()
+        #endregion
+
+        #region Private Methods
+        private void CreateCSV()
         {
 
             // Get all unique keys across all dictionaries
@@ -496,5 +503,6 @@ namespace SassieAssignmentImport.Controllers
 
             return comments;
         }
+        #endregion
     }
 }
