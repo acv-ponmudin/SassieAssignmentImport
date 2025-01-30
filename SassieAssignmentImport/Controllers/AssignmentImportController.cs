@@ -32,7 +32,7 @@ namespace SassieAssignmentImport.Controllers
         private List<Dictionary<string, string>> records = new List<Dictionary<string, string>>();
         #endregion
 
-        #region Public Methods
+        #region Constructor
         public AssignmentImportController()
         {
             _hondaCPOService = new HondaCPOService();
@@ -62,34 +62,18 @@ namespace SassieAssignmentImport.Controllers
             _postsale_list.Add(QuestionMapping.postsale_mappingH);
             _postsale_list.Add(QuestionMapping.postsale_mappingI);
             _postsale_list.Add(QuestionMapping.postsale_mappingJ);
-        }
+        } 
+        #endregion
 
+        #region Public Methods
         public List<int> GetAssignments()
         {
             return _hondaCPOService.GetAssignments();
         }
-
-        public void InsertSassieJob(List<JobImportResponse> jobImportResponses)
-        {
-            // Convert List to XML
-            XElement root = new XElement("Root",
-                jobImportResponses.Select(emp =>
-                    new XElement("Job",
-                        new XElement("assignment_id", emp.AssignmentId),
-                        new XElement("survey_id", emp.SurveyId),
-                        new XElement("client_location_id", emp.ClientLocationId),
-                        new XElement("job_id", emp.JobId)
-                    )
-                )
-            );
-
-            _hondaCPOService.InsertSassieJob(root.ToString());
-        }
-
+        
         public async Task<List<JobImportResponse>> ImportAssignmentsAsync(List<int> assignments)
         {
             JobImportResponse[] jobImportResponses = null;
-            List<JobImportResponse> success;
             try
             {
                 Log.Information("Sassie Authentication In-Progress...");
@@ -113,9 +97,6 @@ namespace SassieAssignmentImport.Controllers
                 jobImportResponses = await Task.WhenAll(importList);
 
                 //CreateCSV();
-
-                success = jobImportResponses.Where(x => x.Status == System.Net.HttpStatusCode.Created).ToList();
-                var failed = jobImportResponses.Except(success);
             }
             finally
             {
@@ -127,10 +108,30 @@ namespace SassieAssignmentImport.Controllers
                 }
             }
 
-            return success;
+            return jobImportResponses?.ToList();
         }
 
-        public async Task<JobImportResponse> ImportSingleAssignmentAsync(int assignmentID)
+        public void InsertSassieJob(List<JobImportResponse> jobImportResponses)
+        {
+            // Convert List to XML
+            XElement root = new XElement("Root",
+                jobImportResponses.Select(emp =>
+                    new XElement("Job",
+                        new XElement("assignment_id", emp.AssignmentId),
+                        new XElement("survey_id", emp.SurveyId),
+                        new XElement("client_location_id", emp.ClientLocationId),
+                        new XElement("job_id", emp.JobId)
+                    )
+                )
+            );
+
+            _hondaCPOService.InsertSassieJob(root.ToString());
+        }
+
+        #endregion
+
+        #region Private Methods
+        private async Task<JobImportResponse> ImportSingleAssignmentAsync(int assignmentID)
         {
             JobImportResponse jobResponse;
             try
@@ -190,10 +191,7 @@ namespace SassieAssignmentImport.Controllers
 
             return jobResponse;
         }
-
-        #endregion
-
-        #region Private Methods
+        
         private void CreateCSV()
         {
 

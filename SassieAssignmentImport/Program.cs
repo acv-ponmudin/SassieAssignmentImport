@@ -9,23 +9,29 @@ namespace SassieAssignmentImport
 {
     internal class Program
     {
-        private static int _batchSize = 50;
+        private static readonly int _batchSize = 50;
+        //assignments count year wise
+        //2025    121
+        //2024    3708
+        //2023    7723
+        //2022    7223
+        //2021    7537
+        //2020    7049
+        //2019    9753
+        //2018    13799
 
         static async Task Main(string[] args)
         {
             try
             {
                 CreateLogger();
-                Log.Information("Please wait while initializing...");
 
-                //2025    121
-                //2024    3708
-                //2023    7723
-                //2022    7223
-                //2021    7537
-                //2020    7049
-                //2019    9753
-                //2018    13799
+                //List<JobImportResponse> jobImportResponses = new List<JobImportResponse>()
+                //{
+                //    new JobImportResponse(){AssignmentId=123,SurveyId="123",ClientLocationId="123",JobId="123"},
+                //    new JobImportResponse(){AssignmentId=124,SurveyId="124",ClientLocationId="124",JobId="124"}
+                //};
+                //InsertSassieJob(jobImportResponses);
 
                 //assignmentID = 26228303;
                 //assignmentID = 23183043;
@@ -36,19 +42,20 @@ namespace SassieAssignmentImport
                 //assignmentID = 26224508;//to check images
                 //assignmentID = 25312675;//repair order first page, non compliant items images 
 
-                //List<JobImportResponse> jobImportResponses = new List<JobImportResponse>()
-                //{
-                //    new JobImportResponse(){AssignmentId=123,SurveyId="123",ClientLocationId="123",JobId="123"},
-                //    new JobImportResponse(){AssignmentId=124,SurveyId="124",ClientLocationId="124",JobId="124"}
-                //};
-                //InsertSassieJob(jobImportResponses);
-
                 //List<int> assignments = new List<int>() { 25312618 };
-                //List<int> assignments = new List<int>() { 25312618, 25312619 };
+                List<int> assignments = new List<int>() { 25312618, 25312619 };
                 //List<int> assignments = new List<int>() { 25312618, 25312619, 25312620, 25312622, 25312623, 25312624, 25312625, 25312626, 25312627, 25312628, 25312629, 25312630, 25312631, 25312632, 25312633, 25312634, 25312636, 25312637, 25312638, 25312639, 25312640, 25312642, 25312643, 25312646, 25312647, 25312649, 25312650, 25312651, 25312652, 25312653, 25312654, 25312655, 25312656, 25312657, 25312658, 25312659, 25312660, 25312661, 25312663, 25312664, 25312665, 25312666, 25312667, 25312668, 25312669, 25312671, 25312672, 25312673, 25312674, 25312675 };
 
                 var controller = new AssignmentImportController();
-                var assignments = controller.GetAssignments();
+                
+                Log.Information("Please wait while fetching assignments...");
+                //var assignments = controller.GetAssignments();
+
+                if (assignments == null || assignments.Count == 0)
+                {
+                    Log.Information($"No assignments to import!");
+                    return;
+                }
 
                 for (int i = 0; i < assignments.Count; i += _batchSize)
                 {
@@ -56,18 +63,36 @@ namespace SassieAssignmentImport
                     List<int> batch = assignments.Skip(i).Take(_batchSize).ToList();
 
                     // Process the batch
-                    var success = await controller.ImportAssignmentsAsync(batch);
+                    Log.Information($"Batch-{i + 1} job import started.");
+                    var jobImportResponses = await controller.ImportAssignmentsAsync(batch);
+
+                    Log.Information($"Batch-{i + 1} job import completed.");
+
+                    var success = jobImportResponses.Where(x => x.Status == System.Net.HttpStatusCode.Created).ToList();
+                    var failed = jobImportResponses.Except(success).ToList();
 
                     // Update database
                     if (success != null && success.Count > 0)
                     {
                         controller.InsertSassieJob(success);
-                        Log.Information($"Inserted successful [{success.Count}] job_ids into the database in batch-{i+1}.");
+                        Log.Information($"Inserted [{success.Count}] successful job_ids from batch-{i + 1} into the database.");
+                    }
+                    else
+                    {
+                        Log.Information($"No successful jobs!");
                     }
 
-                    break;
-                }
+                    if (failed != null && failed.Count > 0)
+                    {
+                        Log.Information($"Failed count [{failed.Count}].");
+                    }
+                    else
+                    {
+                        Log.Information($"No failed jobs!");
+                    }
 
+                    break;//TEST purpose
+                }
             }
             catch (Exception ex)
             {
@@ -76,10 +101,9 @@ namespace SassieAssignmentImport
             finally
             {
                 Log.CloseAndFlush(); // Ensures logs are flushed
+                Console.WriteLine($"DONE! Enter any key to exit!");
+                Console.ReadKey();
             }
-
-            Console.WriteLine($"Enter any key to exit!");
-            Console.ReadKey();
         }
 
         static void CreateLogger()
