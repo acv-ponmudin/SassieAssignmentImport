@@ -104,7 +104,7 @@ namespace SassieAssignmentImport.Controllers
                 var importList = new List<Task<JobImportResponse>>();
                 foreach (int assignmentID in assignments)
                 {
-                    importList.Add(ImportSingleAssignmentAsync(assignmentID, authResponse.AccessToken));
+                    importList.Add(ImportSingleAssignmentAsync(assignmentID));
                 }
                 jobImportResponses = await Task.WhenAll(importList);
 
@@ -126,7 +126,7 @@ namespace SassieAssignmentImport.Controllers
             return success;
         }
 
-        public async Task<JobImportResponse> ImportSingleAssignmentAsync(int assignmentID, string token)
+        public async Task<JobImportResponse> ImportSingleAssignmentAsync(int assignmentID)
         {
             JobImportResponse jobResponse;
             try
@@ -172,10 +172,11 @@ namespace SassieAssignmentImport.Controllers
                     SurveyID = surveyID,
                     ClientLocationID = clientLocationID,
                     Data = _inspectionData,
-                    Token = token
                 };
 
                 jobResponse = await _sassieApi.ImportJobAsync(jobRequest);
+                //jobResponse = new JobImportResponse();
+                //await Task.Delay(300);
             }
             catch (Exception ex)
             {

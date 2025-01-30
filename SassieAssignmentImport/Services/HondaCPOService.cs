@@ -16,11 +16,9 @@ namespace SassieAssignmentImport.Services
         public List<int> GetAssignments()
         {
             int year = 2024;
-            string cmdText = $"SELECT A.Assignment_ID " +
-                $"FROM ASSIGNMENT_AUDIT A " +
-                $"LEFT JOIN ASSIGNMENT_JOB_SASSIE S ON A.Assignment_ID = S.Assignment_ID " +
-                $"WHERE YEAR(audit_date) = {year} AND S.Assignment_ID IS NULL " +
-                $"ORDER BY audit_date DESC";
+
+            //Fetching only honda assignments
+            string cmdText = $"SELECT A.Assignment_ID FROM ASSIGNMENT_AUDIT A  \r\n   INNER JOIN dbo.ORGANIZATION AS O ON A.Dealer_ID = O.Organization_ID \r\n   LEFT JOIN ASSIGNMENT_JOB_SASSIE S ON A.Assignment_ID = S.Assignment_ID \r\n   WHERE YEAR(audit_date) = {year} AND O.Organization_Abbreviation = 'A' AND S.Assignment_ID IS NULL \r\n   ORDER BY audit_date DESC"; 
             DataSet dsResult = SqlHelper.ExecuteDataset(_connection, CommandType.Text, cmdText);
 
             List<int> res = dsResult.Tables[0].AsEnumerable().Select(row => (int)row["Assignment_ID"]).ToList();

@@ -12,6 +12,7 @@ namespace SassieAssignmentImport.Services
     class SassieApiService
     {
         private readonly HttpClient _client;
+        private static int _counter = 1;
 
         public SassieApiService()
         {
@@ -38,6 +39,7 @@ namespace SassieAssignmentImport.Services
             {
                 Log.Information("Sassie Authentication SUCCESS!");
                 authResponse = JsonConvert.DeserializeObject<AuthenticationResponse>(responseData);
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authResponse.AccessToken);
             }
             else
             {
@@ -52,8 +54,6 @@ namespace SassieAssignmentImport.Services
             string jsonData = JsonConvert.SerializeObject(request.Data); // Serialize to JSON
             StringContent content = new StringContent(jsonData, System.Text.Encoding.UTF8, "application/json");
 
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", request.Token);
-
             HttpResponseMessage response = await _client.PostAsync("2sgstrans/sapi/api/job_import", content);
             //response.EnsureSuccessStatusCode();
             string responseData = await response.Content.ReadAsStringAsync();
@@ -64,14 +64,14 @@ namespace SassieAssignmentImport.Services
                 //jobResponse = JsonConvert.DeserializeObject<JobImportResponse>(responseData);
                 JObject job_import = (JObject)JObject.Parse(responseData)["job_import"];
                 jobResponse = job_import.ToObject<JobImportResponse>();
-                Log.Information($"Assignment ID: {request.AssignmentID} job import SUCCESS! Job ID: {jobResponse.JobId}");
+                Log.Information($"{_counter++}) Assignment ID: {request.AssignmentID} job import SUCCESS! Job ID: {jobResponse.JobId}");
                 jobResponse.AssignmentId = request.AssignmentID;
                 jobResponse.Status = response.StatusCode;
             }
             else
             {
                 var error = JsonConvert.DeserializeObject<dynamic>(responseData);
-                Log.Error($"Assignment ID: {request.AssignmentID} job import ERROR! {error}");
+                Log.Error($"{_counter++}) Assignment ID: {request.AssignmentID} job import ERROR! {error}");
                 jobResponse = new JobImportResponse
                 {
                     AssignmentId = request.AssignmentID,
