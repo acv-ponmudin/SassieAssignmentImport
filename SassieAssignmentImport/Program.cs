@@ -76,6 +76,9 @@ namespace SassieAssignmentImport
                     {
                         controller.InsertSassieJob(success);
                         Log.Information($"Inserted [{success.Count}] successful job_ids from batch-{i + 1} into the database.");
+                        //write jobImportResponses to file 
+                        var json = Newtonsoft.Json.JsonConvert.SerializeObject(success, Newtonsoft.Json.Formatting.Indented);
+                        Log.Information($"SUCCESS JOB(S)::{Environment.NewLine}{json}");
                     }
                     else
                     {
@@ -85,6 +88,9 @@ namespace SassieAssignmentImport
                     if (failed != null && failed.Count > 0)
                     {
                         Log.Information($"Failed count [{failed.Count}].");
+                        //write jobImportResponses to file 
+                        var json = Newtonsoft.Json.JsonConvert.SerializeObject(failed, Newtonsoft.Json.Formatting.Indented);
+                        Log.Information($"FAILED JOB(S)::{Environment.NewLine}{json}");
                     }
                     else
                     {

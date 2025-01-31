@@ -73,40 +73,27 @@ namespace SassieAssignmentImport.Controllers
         
         public async Task<List<JobImportResponse>> ImportAssignmentsAsync(List<int> assignments)
         {
-            JobImportResponse[] jobImportResponses = null;
-            try
+            Log.Information("Sassie Authentication In-Progress...");
+            var authRequest = new AuthenticationRequest
             {
-                Log.Information("Sassie Authentication In-Progress...");
-                var authRequest = new AuthenticationRequest
-                {
-                    GrantType = GRANT_TYPE,
-                    ClientId = CLIENT_ID,
-                    ClientSecret = CLIENT_SECRET
-                };
-                var authResponse = await _sassieApi.AuthenticateAsync(authRequest);
+                GrantType = GRANT_TYPE,
+                ClientId = CLIENT_ID,
+                ClientSecret = CLIENT_SECRET
+            };
+            var authResponse = await _sassieApi.AuthenticateAsync(authRequest);
 
-                if (authResponse == null)
-                    return null;
+            if (authResponse == null)
+                return null;
 
-                //Asynchronous for I/O bound
-                var importList = new List<Task<JobImportResponse>>();
-                foreach (int assignmentID in assignments)
-                {
-                    importList.Add(ImportSingleAssignmentAsync(assignmentID));
-                }
-                jobImportResponses = await Task.WhenAll(importList);
-
-                //CreateCSV();
-            }
-            finally
+            //Asynchronous for I/O bound
+            var importList = new List<Task<JobImportResponse>>();
+            foreach (int assignmentID in assignments)
             {
-                //write jobImportResponses to file 
-                if (jobImportResponses != null && jobImportResponses.Length > 0)
-                {
-                    var json = Newtonsoft.Json.JsonConvert.SerializeObject(jobImportResponses, Newtonsoft.Json.Formatting.Indented);
-                    Log.Information($"RESULT::{Environment.NewLine}{json}");
-                }
+                importList.Add(ImportSingleAssignmentAsync(assignmentID));
             }
+            JobImportResponse[] jobImportResponses = await Task.WhenAll(importList);
+
+            //CreateCSV();
 
             return jobImportResponses?.ToList();
         }
