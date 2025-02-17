@@ -100,6 +100,10 @@ namespace SassieAssignmentImport.Utilities
             {5500,  "question_1981"},
             {5801,  "question_1961"},
             {6001,  "question_1971"},
+            {6002, "question_28891"},
+            {6003, "question_28901"},
+            {6004, "question_28911"},
+            {6005, "question_28921"},
             {200, "question_2381"},
             {100, "question_2371"},
             {800, "question_2361"},
@@ -165,6 +169,10 @@ namespace SassieAssignmentImport.Utilities
             {5500, "question_8791"},
             {5801,  "question_8801"},
             {6001,  "question_8811"},
+            {6002, "question_28931"},
+            {6003, "question_28941"},
+            {6004, "question_28951"},
+            {6005, "question_28961"},
             {200, "question_7551"},
             {100, "question_7591"},
             {800, "question_7631"},
@@ -230,6 +238,10 @@ namespace SassieAssignmentImport.Utilities
             {5500, "question_7291"},
             {5801,  "question_7301"},
             {6001,  "question_7311"},
+            {6002, "question_28971"},
+            {6003, "question_28981"},
+            {6004, "question_28991"},
+            {6005, "question_29001"},
             {200, "question_6051"},
             {100, "question_6091"},
             {800, "question_6131"},
@@ -295,6 +307,10 @@ namespace SassieAssignmentImport.Utilities
             {5500, "question_4271"},
             {5801,  "question_4281"},
             {6001,  "question_4291"},
+            {6002, "question_29011"},
+            {6003, "question_29021"},
+            {6004, "question_29031"},
+            {6005, "question_29041"},
             {200, "question_3031"},
             {100, "question_3071"},
             {800, "question_3111"},
@@ -359,6 +375,10 @@ namespace SassieAssignmentImport.Utilities
             {5500, "question_16291"},
             {5801,  "question_16301"},
             {6001,  "question_16311"},
+            {6002, "question_29051"},
+            {6003, "question_29061"},
+            {6004, "question_29071"},
+            {6005, "question_29081"},
             {200, "question_15051"},
             {100, "question_15091"},
             {800, "question_15131"},
@@ -423,6 +443,10 @@ namespace SassieAssignmentImport.Utilities
             {5500, "question_14791"},
             {5801,  "question_14801"},
             {6001,  "question_14811"},
+            {6002, "question_29091"},
+            {6003, "question_29101"},
+            {6004, "question_29111"},
+            {6005, "question_29121"},
             {200, "question_13551"},
             {100, "question_13591"},
             {800, "question_13631"},
@@ -487,6 +511,10 @@ namespace SassieAssignmentImport.Utilities
             {5500, "question_13291"},
             {5801,  "question_13301"},
             {6001,  "question_13311"},
+            {6002, "question_29131"},
+            {6003, "question_29141"},
+            {6004, "question_29151"},
+            {6005, "question_29161"},
             {200, "question_12051"},
             {100, "question_12091"},
             {800, "question_12131"},
@@ -551,6 +579,10 @@ namespace SassieAssignmentImport.Utilities
             {5500, "question_11791"},
             {5801,  "question_11801"},
             {6001,  "question_11811"},
+            {6002, "question_29171"},
+            {6003, "question_29181"},
+            {6004, "question_29191"},
+            {6005, "question_29201"},
             {200, "question_10551"},
             {100, "question_10591"},
             {800, "question_10631"},
@@ -615,6 +647,10 @@ namespace SassieAssignmentImport.Utilities
             {5500, "question_5791"},
             {5801,  "question_5801"},
             {6001,  "question_5811"},
+            {6002, "question_29211"},
+            {6003, "question_29221"},
+            {6004, "question_29231"},
+            {6005, "question_29241"},
             {200, "question_4551"},
             {100, "question_4591"},
             {800, "question_4631"},
@@ -679,6 +715,10 @@ namespace SassieAssignmentImport.Utilities
             {5500, "question_10291"},
             {5801,  "question_10301"},
             {6001,  "question_10311"},
+            {6002, "question_29251"},
+            {6003, "question_29261"},
+            {6004, "question_29271"},
+            {6005, "question_29281"},
             {200, "question_9051"},
             {100, "question_9091"},
             {800, "question_9131"},
@@ -706,6 +746,8 @@ namespace SassieAssignmentImport.Utilities
             {100, "question_2421"},
             {800, "question_2411"},
             {400, "question_2391"},
+            {7401, "question_29291"},
+            {7402, "question_29491"},
         };
         public static Dictionary<int, string> postsale_mappingB = new Dictionary<int, string>() {
              { 1,"question_16421" },
@@ -726,6 +768,8 @@ namespace SassieAssignmentImport.Utilities
             {100, "question_16541"},
             {800, "question_16581"},
             {400, "question_16621"},
+            {7401, "question_29301"},
+            {7402, "question_29501"},
         };
         public static Dictionary<int, string> postsale_mappingC = new Dictionary<int, string>() {
              { 2,"question_16741" },
@@ -746,6 +790,8 @@ namespace SassieAssignmentImport.Utilities
             {100, "question_16861"},
             {800, "question_16901"},
             {400, "question_16941"},
+            {7401, "question_29311"},
+            {7402, "question_29511"},
         };
         public static Dictionary<int, string> postsale_mappingD = new Dictionary<int, string>()
         {
@@ -767,6 +813,8 @@ namespace SassieAssignmentImport.Utilities
             {100, "question_17181"},
             {800, "question_17221"},
             {400, "question_17261"},
+            {7401, "question_29321"},
+            {7402, "question_29521"},
         };
         public static Dictionary<int, string> postsale_mappingE = new Dictionary<int, string>()
         {
@@ -788,6 +836,8 @@ namespace SassieAssignmentImport.Utilities
             {100, "question_17501"},
             {800, "question_17541"},
             {400, "question_17581"},
+            {7401, "question_29331"},
+            {7402, "question_29531"},
         };
         public static Dictionary<int, string> postsale_mappingF = new Dictionary<int, string>()
         {
@@ -809,6 +859,8 @@ namespace SassieAssignmentImport.Utilities
             {100, "question_17821"},
             {800, "question_17861"},
             {400, "question_17901"},
+            {7401, "question_29341"},
+            {7402, "question_29541"},
         };
         public static Dictionary<int, string> postsale_mappingG = new Dictionary<int, string>()
         {
@@ -830,6 +882,8 @@ namespace SassieAssignmentImport.Utilities
             {100, "question_18141"},
             {800, "question_18181"},
             {400, "question_18221"},
+            {7401, "question_29351"},
+            {7402, "question_29551"},
         };
         public static Dictionary<int, string> postsale_mappingH = new Dictionary<int, string>()
         {
@@ -851,6 +905,8 @@ namespace SassieAssignmentImport.Utilities
             {100, "question_18461"},
             {800, "question_18501"},
             {400, "question_18541"},
+            {7401, "question_29361"},
+            {7402, "question_29561"},
         };
         public static Dictionary<int, string> postsale_mappingI = new Dictionary<int, string>()
         {
@@ -872,6 +928,8 @@ namespace SassieAssignmentImport.Utilities
             {100, "question_18781"},
             {800, "question_18821"},
             {400, "question_18861"},
+            {7401, "question_29371"},
+            {7402, "question_29571"},
         };
         public static Dictionary<int, string> postsale_mappingJ = new Dictionary<int, string>()
         {
@@ -893,6 +951,8 @@ namespace SassieAssignmentImport.Utilities
             {100, "question_19101"},
             {800, "question_19141"},
             {400, "question_19181"},
+            {7401, "question_29381"},
+            {7402, "question_29581"},
         };
         #endregion
 

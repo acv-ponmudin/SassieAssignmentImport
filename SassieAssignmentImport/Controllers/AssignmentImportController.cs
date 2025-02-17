@@ -277,6 +277,9 @@ namespace SassieAssignmentImport.Controllers
                 //Consultation
                 AddConsultationData(dsCPOData, 3, vin_num, q_mapping);//tableIndex=3 for Post-sale data 
 
+                //Post-sale Images (Non-compliant items)
+                AddPostsaleImages(vin_num, dsCPOData, q_mapping);
+
                 //Documents
                 AddPostsaleDocuments(vin_num, dsCPOData, q_mapping);
 
@@ -370,6 +373,40 @@ namespace SassieAssignmentImport.Controllers
 
             foreach (DataRow row in matchRows)
             {
+                if(row.IsNull("Image_SeqNumber"))
+                {
+                    continue;
+                }
+                imgNum = (int)row["Image_SeqNumber"];
+                if (!q_mapping.ContainsKey(imgNum))
+                {
+                    continue;
+                }
+
+                imgFile = $"{IMAGE_ROOTPATH}{row["ImageFile"].ToString().Replace("\\", "/")}";
+
+                _inspectionData.Add(q_mapping[imgNum], imgFile);
+            }
+        }
+
+        private void AddPostsaleImages(string vin_num, DataSet dsCPOData, Dictionary<int, string> q_mapping)
+        {
+            int imgNum;
+            string imgFile;
+
+            string rowFilter = $"Vehicle_VIN = '{vin_num}'";
+            DataRow[] matchRows = dsCPOData.Tables[2].Select(rowFilter);
+            if (matchRows == null)
+            {
+                return;
+            }
+
+            foreach (DataRow row in matchRows)
+            {
+                if (row.IsNull("Image_SeqNumber"))
+                {
+                    continue;
+                }
                 imgNum = (int)row["Image_SeqNumber"];
                 if (!q_mapping.ContainsKey(imgNum))
                 {
