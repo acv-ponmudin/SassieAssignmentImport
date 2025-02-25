@@ -475,6 +475,7 @@ namespace SassieAssignmentImport.Controllers
         {
             int qid;
             int qval;
+            string comments;
             foreach (DataRow row in dsCPOData.Tables[6].Rows)
             {
                 qid = (int)row["Question_ID"];
@@ -484,6 +485,14 @@ namespace SassieAssignmentImport.Controllers
                     continue;
                 }
                 _inspectionData.Add(QuestionMapping.facility_mapping[qid], QuestionMapping.objective[qval].Trim());
+
+                //Facility section comments
+                comments = Convert.ToString(row["Question_Comments"]);
+                if (string.IsNullOrEmpty(comments) || !QuestionMapping.facility_comments.ContainsKey(qid))
+                {
+                    continue;
+                }
+                _inspectionData.Add(QuestionMapping.facility_comments[qid], comments);
             }
 
             AddFacilityImages(dsCPOData);

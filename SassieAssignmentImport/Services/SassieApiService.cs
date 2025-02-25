@@ -29,6 +29,7 @@ namespace SassieAssignmentImport.Services
         public async Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest data)
         {
             AuthenticationResponse authResponse = null;
+            Log.Information($"BaseAddress: {_client.BaseAddress.AbsoluteUri}");
             string jsonData = JsonConvert.SerializeObject(data); // Serialize to JSON
             StringContent content = new StringContent(jsonData, System.Text.Encoding.UTF8, "application/json");
 

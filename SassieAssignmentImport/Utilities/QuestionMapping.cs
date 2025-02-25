@@ -38,6 +38,13 @@ namespace SassieAssignmentImport.Utilities
              { 8100,"question_231" },
             { 8200,"question_241" }
         };
+        public static Dictionary<int, string> facility_comments = new Dictionary<int, string>()
+        {
+            { 24101,"question_151" },
+            { 24102,"question_171" },
+            { 24103,"question_191" },
+             { 24104,"question_211" },
+        };
 
         #region PRE-SALE
         public static Dictionary<int, string> presale_mappingA = new Dictionary<int, string>()
