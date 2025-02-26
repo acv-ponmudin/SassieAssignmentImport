@@ -16,13 +16,19 @@ namespace SassieAssignmentImport.Services
 
         public SassieApiService()
         {
-            _client = new HttpClient
+            var handler = new HttpClientHandler
+            {
+                UseProxy = false,
+                UseCookies = false
+            };
+            _client = new HttpClient(handler)
             {
                 BaseAddress = new Uri("https://uat.sassieshop.com")
             };
             _client.DefaultRequestHeaders.Accept.Clear();
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             _client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("2sgstrans", "1.0"));
+            _client.DefaultRequestHeaders.ConnectionClose = false;
             _client.Timeout = TimeSpan.FromMinutes(60);
         }
 

@@ -124,7 +124,7 @@ namespace SassieAssignmentImport.Utilities
             {6003, "question_28901"},
             {6004, "question_28911"},
             {6005, "question_28921"},
-             {5601,  "question_1971"},
+             {5601,  "question_1971"},//doc images in non-compliant items
             {5701, "question_28891"},
             {5901, "question_28901"},
             {200, "question_2381"},
