@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SassieAssignmentImport.DTO
 {
@@ -7,6 +8,7 @@ namespace SassieAssignmentImport.DTO
         public int AssignmentID { get; set; }
         public string SurveyID { get; set; }
         public string ClientLocationID { get; set; }
+        public DateTime AuditDate { get; set; }
         public Dictionary<string, string> Data { get; set; }
     }
 }

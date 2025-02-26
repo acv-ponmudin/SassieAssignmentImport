@@ -29,6 +29,8 @@ namespace SassieAssignmentImport.Services
         public async Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest data)
         {
             AuthenticationResponse authResponse = null;
+            Log.Information("Sassie Authentication In-Progress...");
+
             Log.Information($"BaseAddress: {_client.BaseAddress.AbsoluteUri}");
             string jsonData = JsonConvert.SerializeObject(data); // Serialize to JSON
             StringContent content = new StringContent(jsonData, System.Text.Encoding.UTF8, "application/json");
@@ -67,6 +69,7 @@ namespace SassieAssignmentImport.Services
                 jobResponse = job_import.ToObject<JobImportResponse>();
                 Log.Information($"{_counter++}) Assignment ID: {request.AssignmentID} job import SUCCESS! Job ID: {jobResponse.JobId}");
                 jobResponse.AssignmentId = request.AssignmentID;
+                jobResponse.AuditDate = request.AuditDate;
                 jobResponse.Status = response.StatusCode;
             }
             else
@@ -79,6 +82,7 @@ namespace SassieAssignmentImport.Services
                     Status = response.StatusCode,
                     SurveyId = request.SurveyID,
                     ClientLocationId = request.ClientLocationID,
+                    AuditDate = request.AuditDate,
                     JobId = error
                 };
             }

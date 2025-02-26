@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Net;
 
 namespace SassieAssignmentImport.DTO
@@ -16,6 +17,9 @@ namespace SassieAssignmentImport.DTO
 
         [JsonProperty("client_location_id")]
         public string ClientLocationId { get; set; }
+
+        [JsonProperty("audit_date")]
+        public DateTime AuditDate { get; set; }
 
         [JsonProperty("job_id")]
         public object JobId { get; set; }

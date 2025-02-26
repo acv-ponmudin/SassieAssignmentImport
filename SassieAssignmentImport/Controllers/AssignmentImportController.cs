@@ -17,6 +17,8 @@ namespace SassieAssignmentImport.Controllers
     {
         #region Members
         private static int _counter = 1;
+        private bool _includeImages;
+        private bool _authenticate;
         private readonly string GRANT_TYPE = "client_credentials";
         private readonly string CLIENT_ID = "WSwDiUqqv5Q2InctWBHkWeTWmDmfiNJl";
         private readonly string CLIENT_SECRET = "62UEIr61r2FQc9xyvRn4PBdmRQ4gTPwa";
@@ -62,7 +64,7 @@ namespace SassieAssignmentImport.Controllers
             _postsale_list.Add(QuestionMapping.postsale_mappingH);
             _postsale_list.Add(QuestionMapping.postsale_mappingI);
             _postsale_list.Add(QuestionMapping.postsale_mappingJ);
-        } 
+        }
         #endregion
 
         #region Public Methods
@@ -70,19 +72,14 @@ namespace SassieAssignmentImport.Controllers
         {
             return _hondaCPOService.GetAssignments();
         }
-        
-        public async Task<List<JobImportResponse>> ImportAssignmentsAsync(List<int> assignments)
-        {
-            Log.Information("Sassie Authentication In-Progress...");
-            var authRequest = new AuthenticationRequest
-            {
-                GrantType = GRANT_TYPE,
-                ClientId = CLIENT_ID,
-                ClientSecret = CLIENT_SECRET
-            };
-            var authResponse = await _sassieApi.AuthenticateAsync(authRequest);
 
-            if (authResponse == null)
+        public async Task<List<JobImportResponse>> ImportAssignmentsAsync(List<int> assignments, bool authenticate, bool includeImages)
+        {
+            _authenticate = authenticate;
+            _includeImages = includeImages;
+            
+            bool result = await Authenticate();
+            if (!result)
                 return null;
 
             //Asynchronous for I/O bound
@@ -97,17 +94,18 @@ namespace SassieAssignmentImport.Controllers
 
             return jobImportResponses?.ToList();
         }
-
+        
         public void InsertSassieJob(List<JobImportResponse> jobImportResponses)
         {
             // Convert List to XML
             XElement root = new XElement("Root",
-                jobImportResponses.Select(emp =>
+                jobImportResponses.Select(job =>
                     new XElement("Job",
-                        new XElement("assignment_id", emp.AssignmentId),
-                        new XElement("survey_id", emp.SurveyId),
-                        new XElement("client_location_id", emp.ClientLocationId),
-                        new XElement("job_id", emp.JobId)
+                        new XElement("assignment_id", job.AssignmentId),
+                        new XElement("survey_id", job.SurveyId),
+                        new XElement("client_location_id", job.ClientLocationId),
+                        new XElement("audit_date", job.AuditDate),
+                        new XElement("job_id", job.JobId)
                     )
                 )
             );
@@ -118,6 +116,22 @@ namespace SassieAssignmentImport.Controllers
         #endregion
 
         #region Private Methods
+        private async Task<bool> Authenticate()
+        {
+            if (!_authenticate)
+                return true;
+
+            var authRequest = new AuthenticationRequest
+            {
+                GrantType = GRANT_TYPE,
+                ClientId = CLIENT_ID,
+                ClientSecret = CLIENT_SECRET
+            };
+            var authResponse = await _sassieApi.AuthenticateAsync(authRequest);
+
+            return authResponse != null;
+        }
+
         private async Task<JobImportResponse> ImportSingleAssignmentAsync(int assignmentID)
         {
             JobImportResponse jobResponse;
@@ -132,6 +146,7 @@ namespace SassieAssignmentImport.Controllers
                 //ACURA:: 1061
                 string surveyID = divisionCode == "A" ? "1039" : "1061";
                 string clientLocationID = dsCPOData.Tables[0].Rows[0]["Dealer_Code"].ToString().Trim();
+                var auditDate = Convert.ToDateTime(dsCPOData.Tables[0].Rows[0]["Audit_Date"]);
 
                 //1. Consultation information 
                 //2. Dealer information 
@@ -163,6 +178,7 @@ namespace SassieAssignmentImport.Controllers
                     AssignmentID = assignmentID,
                     SurveyID = surveyID,
                     ClientLocationID = clientLocationID,
+                    AuditDate = auditDate,
                     Data = _inspectionData,
                 };
 
@@ -178,7 +194,7 @@ namespace SassieAssignmentImport.Controllers
 
             return jobResponse;
         }
-        
+
         private void CreateCSV()
         {
 
@@ -278,7 +294,8 @@ namespace SassieAssignmentImport.Controllers
                 AddConsultationData(dsCPOData, 3, vin_num, q_mapping);//tableIndex=3 for Post-sale data 
 
                 //Post-sale Images (Non-compliant items)
-                AddPostsaleImages(vin_num, dsCPOData, q_mapping);
+                if (_includeImages)
+                    AddPostsaleImages(vin_num, dsCPOData, q_mapping);
 
                 //Documents
                 AddPostsaleDocuments(vin_num, dsCPOData, q_mapping);
@@ -308,7 +325,8 @@ namespace SassieAssignmentImport.Controllers
                 AddConsultationData(dsCPOData, 5, vin_num, q_mapping);//tableIndex=5 for Pre-sale data 
 
                 //Pre-sale Images
-                AddPresaleImages(vin_num, dsCPOData, q_mapping);
+                if (_includeImages)
+                    AddPresaleImages(vin_num, dsCPOData, q_mapping);
 
                 //Documents
                 AddPresaleDocuments(vin_num, dsCPOData, q_mapping);
@@ -373,7 +391,7 @@ namespace SassieAssignmentImport.Controllers
 
             foreach (DataRow row in matchRows)
             {
-                if(row.IsNull("Image_SeqNumber"))
+                if (row.IsNull("Image_SeqNumber"))
                 {
                     continue;
                 }
@@ -495,7 +513,8 @@ namespace SassieAssignmentImport.Controllers
                 _inspectionData.Add(QuestionMapping.facility_comments[qid], comments);
             }
 
-            AddFacilityImages(dsCPOData);
+            if (_includeImages)
+                AddFacilityImages(dsCPOData);
         }
 
         private void AddFacilityImages(DataSet dsCPOData)

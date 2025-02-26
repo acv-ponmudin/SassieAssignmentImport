@@ -42,18 +42,23 @@ namespace SassieAssignmentImport
                 //assignmentID = 26224508;//to check images
                 //assignmentID = 25312675;//repair order first page, non compliant items images 
 
-                Log.Information("Please wait while fetching assignments...");
-                //List<int> assignments = new List<int>() { 25312618 };
-                List<int> assignments = new List<int>() { 26225141 };
-                //List<int> assignments = new List<int>() { 25312618, 25312619, 25312620, 25312622, 25312623, 25312624, 25312625, 25312626, 25312627, 25312628, 25312629, 25312630, 25312631, 25312632, 25312633, 25312634, 25312636, 25312637, 25312638, 25312639, 25312640, 25312642, 25312643, 25312646, 25312647, 25312649, 25312650, 25312651, 25312652, 25312653, 25312654, 25312655, 25312656, 25312657, 25312658, 25312659, 25312660, 25312661, 25312663, 25312664, 25312665, 25312666, 25312667, 25312668, 25312669, 25312671, 25312672, 25312673, 25312674, 25312675 };
+                bool authenticate = true;
+                bool includeImages = false;
+
                 var controller = new AssignmentImportController();
+                Log.Information("Please wait while fetching assignments...");
                 //var assignments = controller.GetAssignments();
+
+                List<int> assignments = new List<int>() { 18079979 };//20115999, 18585686
+                //List<int> assignments = new List<int>() { 25312618, 25312619, 25312620, 25312622, 25312623, 25312624, 25312625, 25312626, 25312627, 25312628, 25312629, 25312630, 25312631, 25312632, 25312633, 25312634, 25312636, 25312637, 25312638, 25312639, 25312640, 25312642, 25312643, 25312646, 25312647, 25312649, 25312650, 25312651, 25312652, 25312653, 25312654, 25312655, 25312656, 25312657, 25312658, 25312659, 25312660, 25312661, 25312663, 25312664, 25312665, 25312666, 25312667, 25312668, 25312669, 25312671, 25312672, 25312673, 25312674, 25312675 };
 
                 if (assignments == null || assignments.Count == 0)
                 {
                     Log.Information($"No assignments to import!");
                     return;
                 }
+
+                Log.Information($"Total no. of assignments: {assignments.Count}");
 
                 int iBatch = 0;
 
@@ -65,7 +70,7 @@ namespace SassieAssignmentImport
 
                     // Process the batch
                     Log.Information($"Batch-{iBatch} job import started.");
-                    var jobImportResponses = await controller.ImportAssignmentsAsync(batch);
+                    var jobImportResponses = await controller.ImportAssignmentsAsync(batch, authenticate, includeImages);
 
                     Log.Information($"Batch-{iBatch} job import completed.");
 
@@ -98,7 +103,7 @@ namespace SassieAssignmentImport
                         Log.Information($"No failed jobs!");
                     }
 
-                    if(iBatch == 2) break;//TEST purpose
+                    if (iBatch == 2) break;//TEST purpose
                 }
             }
             catch (Exception ex)
