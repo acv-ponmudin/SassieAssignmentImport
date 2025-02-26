@@ -64,6 +64,16 @@ namespace SassieAssignmentImport.Controllers
             _postsale_list.Add(QuestionMapping.postsale_mappingH);
             _postsale_list.Add(QuestionMapping.postsale_mappingI);
             _postsale_list.Add(QuestionMapping.postsale_mappingJ);
+            _postsale_list.Add(QuestionMapping.postsale_mappingK);
+            _postsale_list.Add(QuestionMapping.postsale_mappingL);
+            _postsale_list.Add(QuestionMapping.postsale_mappingM);
+            _postsale_list.Add(QuestionMapping.postsale_mappingN);
+            _postsale_list.Add(QuestionMapping.postsale_mappingO);
+            _postsale_list.Add(QuestionMapping.postsale_mappingP);
+            _postsale_list.Add(QuestionMapping.postsale_mappingQ);
+            _postsale_list.Add(QuestionMapping.postsale_mappingR);
+            _postsale_list.Add(QuestionMapping.postsale_mappingS);
+            _postsale_list.Add(QuestionMapping.postsale_mappingT);
         }
         #endregion
 
