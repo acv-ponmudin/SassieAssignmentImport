@@ -15,10 +15,11 @@ namespace SassieAssignmentImport.Services
 
         public List<int> GetAssignments()
         {
-            int year = 2024;
+            int year = 2023;
 
             //Fetching only honda assignments
-            string cmdText = $"SELECT A.Assignment_ID FROM ASSIGNMENT_AUDIT A  \r\n   INNER JOIN dbo.ORGANIZATION AS O ON A.Dealer_ID = O.Organization_ID \r\n   LEFT JOIN ASSIGNMENT_JOB_SASSIE S ON A.Assignment_ID = S.Assignment_ID \r\n   WHERE YEAR(A.audit_date) = {year} AND O.Organization_Abbreviation = 'A' AND S.Assignment_ID IS NULL \r\n   ORDER BY A.audit_date DESC"; 
+            //string cmdText = $"SELECT A.Assignment_ID FROM ASSIGNMENT_AUDIT A INNER JOIN dbo.ORGANIZATION AS O ON A.Dealer_ID = O.Organization_ID INNER JOIN dbo.ORGANIZATION_RELATIONSHIP_ROLE AS ORO ON O.Organization_ID = ORO.Organization_ID LEFT JOIN ASSIGNMENT_JOB_SASSIE S ON A.Assignment_ID = S.Assignment_ID WHERE YEAR(A.audit_date) = {year} AND S.Assignment_ID IS NULL ORDER BY A.audit_date DESC"; 
+            string cmdText = $"SELECT A.Assignment_ID FROM ASSIGNMENT_AUDIT A \r\n\t\t\t\t\t\t\t\t\t\t\t\tINNER JOIN dbo.ORGANIZATION AS O ON A.Dealer_ID = O.Organization_ID \r\n\t\t\t\t\t\t\t\t\t\t\t\tINNER JOIN dbo.ORGANIZATION_RELATIONSHIP_ROLE AS ORO ON O.Organization_ID = ORO.Organization_ID \r\n\t\t\t\t\t\t\t\t\t\t\t\tLEFT JOIN ASSIGNMENT_JOB_SASSIE S ON A.Assignment_ID = S.Assignment_ID \r\n\t\t\t\t\t\t\t\t\t\t\t\tWHERE ORO.Account_Number LIKE '20%' \r\n\t\t\t\t\t\t\t\t\t\t\t\tAND LEN(ORO.Account_Number) = 6 \r\n\t\t\t\t\t\t\t\t\t\t\t\tAND YEAR(A.audit_date) = {year} \r\n\t\t\t\t\t\t\t\t\t\t\t\tAND S.Assignment_ID IS NULL \r\n\t\t\t\t\t\t\t\t\t\t\t\tORDER BY A.audit_date DESC";
             DataSet dsResult = SqlHelper.ExecuteDataset(_connection, CommandType.Text, cmdText);
 
             List<int> res = dsResult.Tables[0].AsEnumerable().Select(row => (int)row["Assignment_ID"]).ToList();
