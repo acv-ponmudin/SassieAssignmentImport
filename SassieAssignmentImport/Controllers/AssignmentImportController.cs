@@ -87,7 +87,7 @@ namespace SassieAssignmentImport.Controllers
         {
             _authenticate = authenticate;
             _includeImages = includeImages;
-            
+
             bool result = await Authenticate();
             if (!result)
                 return null;
@@ -104,7 +104,7 @@ namespace SassieAssignmentImport.Controllers
 
             return jobImportResponses?.ToList();
         }
-        
+
         public void InsertSassieJob(List<JobImportResponse> jobImportResponses)
         {
             // Convert List to XML
@@ -413,7 +413,8 @@ namespace SassieAssignmentImport.Controllers
 
                 imgFile = $"{IMAGE_ROOTPATH}{row["ImageFile"].ToString().Replace("\\", "/")}";
 
-                _inspectionData.Add(q_mapping[imgNum], imgFile);
+                if (!_inspectionData.ContainsKey(q_mapping[imgNum]))
+                    _inspectionData.Add(q_mapping[imgNum], imgFile);
             }
         }
 

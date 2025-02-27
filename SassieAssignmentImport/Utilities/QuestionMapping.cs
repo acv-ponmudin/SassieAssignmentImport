@@ -112,19 +112,19 @@ namespace SassieAssignmentImport.Utilities
             {22807,"question_1511"},
             {22805,"question_1571"},
             {22808,"question_1571"},
-            {5000,  "question_1911"},
+            {5000,  "question_1911"},//Photo uploads
             {5200,  "question_1921"},
             {5100,  "question_1931"},
             {5300,  "question_1941"},
             {5400,  "question_1951"},
             {5500,  "question_1981"},
             {5801,  "question_1961"},
-            {6001,  "question_1971"},
+            {6001,  "question_1971"},//Non-compliant items
             {6002, "question_28891"},
             {6003, "question_28901"},
             {6004, "question_28911"},
             {6005, "question_28921"},
-             {5601,  "question_1971"},//doc images in non-compliant items
+             {5601,  "question_1971"},//Doc images in non-compliant items [Yet to confirm]
             {5701, "question_28891"},
             {5901, "question_28901"},
             {200, "question_2381"},//Documents 
