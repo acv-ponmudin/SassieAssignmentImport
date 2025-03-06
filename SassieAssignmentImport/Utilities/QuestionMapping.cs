@@ -124,7 +124,7 @@ namespace SassieAssignmentImport.Utilities
             {6003, "question_28901"},
             {6004, "question_28911"},
             {6005, "question_28921"},
-             {5601,  "question_1971"},//Doc images in non-compliant items [Yet to confirm]
+             {5601,  "question_1971"},//Doc images in non-compliant items
             {5701, "question_28891"},
             {5901, "question_28901"},
             {200, "question_2381"},//Documents 
@@ -918,6 +918,10 @@ namespace SassieAssignmentImport.Utilities
             {400, "question_2391"},
             {7401, "question_29291"},//Post-Sale Non-Compliant Items 
             {7402, "question_29491"},
+             {7000, "question_29291"},//Doc images (this has more priority than non-compliant items)
+            {7100, "question_29491"},
+            {7200, "question_30511"},
+            {7300, "question_30521"},
         };
         public static Dictionary<int, string> postsale_mappingB = new Dictionary<int, string>() {
              { 1,"question_16421" },
@@ -943,6 +947,10 @@ namespace SassieAssignmentImport.Utilities
             {400, "question_16621"},
             {7401, "question_29301"},
             {7402, "question_29501"},
+             {7000, "question_29301"},
+            {7100, "question_29501"},
+            {7200, "question_30531"},
+            {7300, "question_30541"},
         };
         public static Dictionary<int, string> postsale_mappingC = new Dictionary<int, string>() {
              { 2,"question_16741" },
@@ -968,6 +976,10 @@ namespace SassieAssignmentImport.Utilities
             {400, "question_16941"},
             {7401, "question_29311"},
             {7402, "question_29511"},
+            {7000, "question_29311"},
+            {7100, "question_29511"},
+            {7200, "question_30551"},
+            {7300, "question_30561"},
         };
         public static Dictionary<int, string> postsale_mappingD = new Dictionary<int, string>()
         {
@@ -994,6 +1006,10 @@ namespace SassieAssignmentImport.Utilities
             {400, "question_17261"},
             {7401, "question_29321"},
             {7402, "question_29521"},
+             {7000, "question_29321"},
+            {7100, "question_29521"},
+            {7200, "question_30571"},
+            {7300, "question_30581"},
         };
         public static Dictionary<int, string> postsale_mappingE = new Dictionary<int, string>()
         {
@@ -1020,6 +1036,10 @@ namespace SassieAssignmentImport.Utilities
             {400, "question_17581"},
             {7401, "question_29331"},
             {7402, "question_29531"},
+             {7000, "question_29331"},
+            {7100, "question_29531"},
+            {7200, "question_30591"},
+            {7300, "question_30601"},
         };
         public static Dictionary<int, string> postsale_mappingF = new Dictionary<int, string>()
         {
@@ -1046,6 +1066,10 @@ namespace SassieAssignmentImport.Utilities
             {400, "question_17901"},
             {7401, "question_29341"},
             {7402, "question_29541"},
+             {7000, "question_29341"},
+            {7100, "question_29541"},
+            {7200, "question_30611"},
+            {7300, "question_30621"},
         };
         public static Dictionary<int, string> postsale_mappingG = new Dictionary<int, string>()
         {
@@ -1072,6 +1096,10 @@ namespace SassieAssignmentImport.Utilities
             {400, "question_18221"},
             {7401, "question_29351"},
             {7402, "question_29551"},
+            {7000, "question_29351"},
+            {7100, "question_29551"},
+            {7200, "question_30631"},
+            {7300, "question_30641"},
         };
         public static Dictionary<int, string> postsale_mappingH = new Dictionary<int, string>()
         {
@@ -1098,6 +1126,10 @@ namespace SassieAssignmentImport.Utilities
             {400, "question_18541"},
             {7401, "question_29361"},
             {7402, "question_29561"},
+             {7000, "question_29361"},
+            {7100, "question_29561"},
+            {7200, "question_30651"},
+            {7300, "question_30661"},
         };
         public static Dictionary<int, string> postsale_mappingI = new Dictionary<int, string>()
         {
@@ -1124,6 +1156,10 @@ namespace SassieAssignmentImport.Utilities
             {400, "question_18861"},
             {7401, "question_29371"},
             {7402, "question_29571"},
+             {7000, "question_29371"},
+            {7100, "question_29571"},
+            {7200, "question_30671"},
+            {7300, "question_30681"},
         };
         public static Dictionary<int, string> postsale_mappingJ = new Dictionary<int, string>()
         {
@@ -1150,6 +1186,10 @@ namespace SassieAssignmentImport.Utilities
             {400, "question_19181"},
             {7401, "question_29381"},
             {7402, "question_29581"},
+             {7000, "question_29381"},
+            {7100, "question_29581"},
+            {7200, "question_30691"},
+            {7300, "question_30701"},
         };
 
         public static Dictionary<int, string> postsale_mappingK = new Dictionary<int, string>()
@@ -1177,6 +1217,10 @@ namespace SassieAssignmentImport.Utilities
             {400, "question_20711"},
             {7401, "question_29391"},
             {7402, "question_29591"},
+            {7000, "question_29391"},
+            {7100, "question_29591"},
+            {7200, "question_30711"},
+            {7300, "question_30721"},
         };
         public static Dictionary<int, string> postsale_mappingL = new Dictionary<int, string>()
         {
@@ -1203,6 +1247,10 @@ namespace SassieAssignmentImport.Utilities
             {400, "question_21051"},
             {7401, "question_29401"},
             {7402, "question_29601"},
+             {7000, "question_29401"},
+            {7100, "question_29601"},
+            {7200, "question_30731"},
+            {7300, "question_30741"},
         };
         public static Dictionary<int, string> postsale_mappingM = new Dictionary<int, string>()
         {
@@ -1229,6 +1277,10 @@ namespace SassieAssignmentImport.Utilities
             {400, "question_21391"},
             {7401, "question_29411"},
             {7402, "question_29611"},
+             {7000, "question_29411"},
+            {7100, "question_29611"},
+            {7200, "question_30751"},
+            {7300, "question_30761"},
         };
         public static Dictionary<int, string> postsale_mappingN = new Dictionary<int, string>()
         {
@@ -1255,6 +1307,10 @@ namespace SassieAssignmentImport.Utilities
             {400, "question_21731"},
             {7401, "question_29421"},
             {7402, "question_29621"},
+             {7000, "question_29421"},
+            {7100, "question_29621"},
+            {7200, "question_30771"},
+            {7300, "question_30781"},
         };
         public static Dictionary<int, string> postsale_mappingO = new Dictionary<int, string>()
         {
@@ -1281,6 +1337,10 @@ namespace SassieAssignmentImport.Utilities
             {400, "question_22071"},
             {7401, "question_29431"},
             {7402, "question_29631"},
+             {7000, "question_29431"},
+            {7100, "question_29631"},
+            {7200, "question_30791"},
+            {7300, "question_30801"},
         };
         public static Dictionary<int, string> postsale_mappingP = new Dictionary<int, string>()
         {
@@ -1307,6 +1367,10 @@ namespace SassieAssignmentImport.Utilities
             {400, "question_22411"},
             {7401, "question_29441"},
             {7402, "question_29641"},
+            {7000, "question_29441"},
+            {7100, "question_29641"},
+            {7200, "question_30811"},
+            {7300, "question_30821"},
         };
         public static Dictionary<int, string> postsale_mappingQ = new Dictionary<int, string>()
         {
@@ -1333,6 +1397,10 @@ namespace SassieAssignmentImport.Utilities
             {400, "question_22751"},
             {7401, "question_29451"},
             {7402, "question_29651"},
+             {7000, "question_29451"},
+            {7100, "question_29651"},
+            {7200, "question_30831"},
+            {7300, "question_30841"},
         };
         public static Dictionary<int, string> postsale_mappingR = new Dictionary<int, string>()
         {
@@ -1359,6 +1427,10 @@ namespace SassieAssignmentImport.Utilities
             {400, "question_23091"},
             {7401, "question_29461"},
             {7402, "question_29661"},
+             {7000, "question_29461"},
+            {7100, "question_29661"},
+            {7200, "question_30851"},
+            {7300, "question_30861"},
         };
         public static Dictionary<int, string> postsale_mappingS = new Dictionary<int, string>()
         {
@@ -1385,6 +1457,10 @@ namespace SassieAssignmentImport.Utilities
             {400, "question_23431"},
             {7401, "question_29471"},
             {7402, "question_29671"},
+             {7000, "question_29471"},
+            {7100, "question_29671"},
+            {7200, "question_30871"},
+            {7300, "question_30881"},
         };
         public static Dictionary<int, string> postsale_mappingT = new Dictionary<int, string>()
         {
@@ -1411,6 +1487,10 @@ namespace SassieAssignmentImport.Utilities
             {400, "question_23771"},
             {7401, "question_29481"},
             {7402, "question_29681"},
+             {7000, "question_29481"},
+            {7100, "question_29681"},
+            {7200, "question_30891"},
+            {7300, "question_30901"},
         };
         #endregion
 

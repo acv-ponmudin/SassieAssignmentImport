@@ -399,7 +399,9 @@ namespace SassieAssignmentImport.Controllers
                 return;
             }
 
-            foreach (DataRow row in matchRows)
+            DataRow[] sortedRows = matchRows.OrderBy(r => r["Image_SeqNumber"]).ToArray();
+
+            foreach (DataRow row in sortedRows)
             {
                 if (row.IsNull("Image_SeqNumber"))
                 {
@@ -430,7 +432,9 @@ namespace SassieAssignmentImport.Controllers
                 return;
             }
 
-            foreach (DataRow row in matchRows)
+            DataRow[] sortedRows = matchRows.OrderBy(r => r["Image_SeqNumber"]).ToArray();
+
+            foreach (DataRow row in sortedRows)
             {
                 if (row.IsNull("Image_SeqNumber"))
                 {
@@ -444,7 +448,8 @@ namespace SassieAssignmentImport.Controllers
 
                 imgFile = $"{IMAGE_ROOTPATH}{row["ImageFile"].ToString().Replace("\\", "/")}";
 
-                _inspectionData.Add(q_mapping[imgNum], imgFile);
+                if (!_inspectionData.ContainsKey(q_mapping[imgNum]))
+                    _inspectionData.Add(q_mapping[imgNum], imgFile);
             }
         }
 
