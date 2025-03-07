@@ -13,9 +13,16 @@ namespace SassieAssignmentImport.Services
     {
         private readonly HttpClient _client;
         private static int _counter = 1;
+        string uriString = "https://uat.sassieshop.com";
+        string uriPROD = "https://www.sassieshop.com";
+        bool isProduction = false;
 
         public SassieApiService()
         {
+            if (isProduction)
+            {
+                uriString = uriPROD;
+            }
             var handler = new HttpClientHandler
             {
                 UseProxy = false,
@@ -23,7 +30,7 @@ namespace SassieAssignmentImport.Services
             };
             _client = new HttpClient(handler)
             {
-                BaseAddress = new Uri("https://uat.sassieshop.com")
+                BaseAddress = new Uri(uriString)
             };
             _client.DefaultRequestHeaders.Accept.Clear();
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
