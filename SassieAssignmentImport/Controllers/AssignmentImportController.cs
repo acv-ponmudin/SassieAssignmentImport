@@ -303,7 +303,7 @@ namespace SassieAssignmentImport.Controllers
                 //Consultation
                 AddConsultationData(dsCPOData, 3, vin_num, q_mapping);//tableIndex=3 for Post-sale data 
 
-                //Post-sale Images (Non-compliant items)
+                //Post-sale Images (Doc images, then Non-compliant items)
                 if (_includeImages)
                     AddPostsaleImages(vin_num, dsCPOData, q_mapping);
 
@@ -334,7 +334,7 @@ namespace SassieAssignmentImport.Controllers
                 //Consultation
                 AddConsultationData(dsCPOData, 5, vin_num, q_mapping);//tableIndex=5 for Pre-sale data 
 
-                //Pre-sale Images
+                //Pre-sale Images (Vehicle photos, then doc images, then non-compliant items)
                 if (_includeImages)
                     AddPresaleImages(vin_num, dsCPOData, q_mapping);
 
@@ -390,6 +390,7 @@ namespace SassieAssignmentImport.Controllers
         private void AddPresaleImages(string vin_num, DataSet dsCPOData, Dictionary<int, string> q_mapping)
         {
             int imgNum;
+            int imgNumNonCompliant = 6001;
             string imgFile;
 
             string rowFilter = $"Vehicle_VIN = '{vin_num}'";
@@ -408,21 +409,36 @@ namespace SassieAssignmentImport.Controllers
                     continue;
                 }
                 imgNum = (int)row["Image_SeqNumber"];
-                if (!q_mapping.ContainsKey(imgNum))
-                {
-                    continue;
-                }
-
                 imgFile = $"{IMAGE_ROOTPATH}{row["ImageFile"].ToString().Replace("\\", "/")}";
 
-                if (!_inspectionData.ContainsKey(q_mapping[imgNum]))
+                //photo uploads
+                if ((imgNum >= 5000 && imgNum <= 5500) || imgNum == 5801)
+                {
+                    if (!q_mapping.ContainsKey(imgNum))
+                    {
+                        throw new Exception($"{imgNum} missing in mapping!");
+                    }
+
                     _inspectionData.Add(q_mapping[imgNum], imgFile);
+                }
+                //Doc images & non-compliant items 
+                else
+                {
+                    if (!q_mapping.ContainsKey(imgNumNonCompliant))
+                    {
+                        throw new Exception($"{imgNumNonCompliant} missing in mapping!");
+                    }
+
+                    _inspectionData.Add(q_mapping[imgNumNonCompliant], imgFile);
+                    imgNumNonCompliant += 1;
+                }
             }
         }
 
         private void AddPostsaleImages(string vin_num, DataSet dsCPOData, Dictionary<int, string> q_mapping)
         {
-            int imgNum;
+            //int imgNum;
+            int imgNumNonCompliant = 7000;
             string imgFile;
 
             string rowFilter = $"Vehicle_VIN = '{vin_num}'";
@@ -440,16 +456,16 @@ namespace SassieAssignmentImport.Controllers
                 {
                     continue;
                 }
-                imgNum = (int)row["Image_SeqNumber"];
-                if (!q_mapping.ContainsKey(imgNum))
+                //imgNum = (int)row["Image_SeqNumber"];
+                if (!q_mapping.ContainsKey(imgNumNonCompliant))
                 {
-                    continue;
+                    throw new Exception($"{imgNumNonCompliant} missing in mapping!");
                 }
 
                 imgFile = $"{IMAGE_ROOTPATH}{row["ImageFile"].ToString().Replace("\\", "/")}";
 
-                if (!_inspectionData.ContainsKey(q_mapping[imgNum]))
-                    _inspectionData.Add(q_mapping[imgNum], imgFile);
+                _inspectionData.Add(q_mapping[imgNumNonCompliant], imgFile);
+                imgNumNonCompliant += 100;
             }
         }
 
