@@ -1,4 +1,5 @@
-﻿using SassieAssignmentImport.DTO;
+﻿using Newtonsoft.Json;
+using SassieAssignmentImport.DTO;
 using SassieAssignmentImport.Services;
 using SassieAssignmentImport.Utilities;
 using Serilog;
@@ -98,9 +99,11 @@ namespace SassieAssignmentImport.Controllers
             {
                 importList.Add(ImportSingleAssignmentAsync(assignmentID));
             }
-            JobImportResponse[] jobImportResponses = await Task.WhenAll(importList);
 
-            //CreateCSV();
+            //WriteToJSONFile();
+            //WriteToCSVFile();
+
+            JobImportResponse[] jobImportResponses = await Task.WhenAll(importList);
 
             return jobImportResponses?.ToList();
         }
@@ -193,8 +196,6 @@ namespace SassieAssignmentImport.Controllers
                 };
 
                 jobResponse = await _sassieApi.ImportJobAsync(jobRequest);
-                //jobResponse = new JobImportResponse();
-                //await Task.Delay(300);
             }
             catch (Exception ex)
             {
@@ -205,17 +206,27 @@ namespace SassieAssignmentImport.Controllers
             return jobResponse;
         }
 
-        private void CreateCSV()
+        private void WriteToJSONFile()
         {
+            string filePath = "files/jobs_json.json";
 
+            string jsonData = JsonConvert.SerializeObject(records, Formatting.Indented);
+
+            File.WriteAllText(filePath, jsonData);
+
+            Console.WriteLine($"JSON file '{filePath}' created successfully!");
+        }
+
+        private void WriteToCSVFile()
+        {
             // Get all unique keys across all dictionaries
             var allKeys = records.SelectMany(dict => dict.Keys).Distinct().ToList();
 
             // Specify CSV file path
-            string csvFilePath = "output.csv";
+            string filePath = "files/jobs_csv.csv";
 
             // Write to CSV
-            using (var writer = new StreamWriter(csvFilePath, false, Encoding.UTF8))
+            using (var writer = new StreamWriter(filePath, false, Encoding.UTF8))
             {
                 // Write the header
                 writer.WriteLine(string.Join(",", allKeys));
@@ -228,7 +239,7 @@ namespace SassieAssignmentImport.Controllers
                 }
             }
 
-            Console.WriteLine($"CSV file '{csvFilePath}' created successfully!");
+            Console.WriteLine($"CSV file '{filePath}' created successfully!");
         }
 
         private void ConsultationInformation(DataSet dsCPOData)
