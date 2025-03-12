@@ -79,7 +79,7 @@ namespace SassieAssignmentImport.Controllers
         #endregion
 
         #region Public Methods
-        public List<int> GetAssignments()
+        public IList<int> GetAssignments()
         {
             return _hondaCPOService.GetAssignments();
         }
@@ -155,9 +155,17 @@ namespace SassieAssignmentImport.Controllers
                 var dsCPOData = _hondaCPOService.GetHondaCPOOCR(assignmentID);
 
                 var divisionCode = dsCPOData.Tables[0].Rows[0]["Division_Code"].ToString().Trim();
-                //HONDA:: 1039
-                //ACURA:: 1061
-                string surveyID = divisionCode == "A" ? "1039" : "1061";
+                //Division_Code - 'A' -> HONDA:: 1039
+                //Division_Code - 'B' -> ACURA:: 1061
+                if (!divisionCode.Equals("A") && !divisionCode.Equals("B"))
+                {
+                    throw new Exception("Invalid Division code!");
+                }
+                string surveyID = "1039";//Honda by default
+                //if (divisionCode == "B")
+                //{
+                //    surveyID = "1061";//Acura
+                //}
                 string clientLocationID = dsCPOData.Tables[0].Rows[0]["Dealer_Code"].ToString().Trim();
                 var auditDate = Convert.ToDateTime(dsCPOData.Tables[0].Rows[0]["Audit_Date"]);
 
