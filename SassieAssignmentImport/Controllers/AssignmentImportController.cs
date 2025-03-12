@@ -445,7 +445,8 @@ namespace SassieAssignmentImport.Controllers
                 {
                     if (!q_mapping.ContainsKey(imgNumNonCompliant))
                     {
-                        throw new Exception($"{imgNumNonCompliant} missing in mapping!");
+                        Log.Information($"Assignment ID: {row["Assignment_ID"]}, Skipping additional '{row["ImageCaption"]}' for VIN {vin_num}");
+                        continue;
                     }
 
                     _inspectionData.Add(q_mapping[imgNumNonCompliant], imgFile);
@@ -478,7 +479,8 @@ namespace SassieAssignmentImport.Controllers
                 //imgNum = (int)row["Image_SeqNumber"];
                 if (!q_mapping.ContainsKey(imgNumNonCompliant))
                 {
-                    throw new Exception($"{imgNumNonCompliant} missing in mapping!");
+                    Log.Information($"Assignment ID: {row["Assignment_ID"]}, Skipping additional '{row["ImageCaption"]}' for VIN {vin_num}");
+                    continue;
                 }
 
                 imgFile = $"{IMAGE_ROOTPATH}{row["ImageFile"].ToString().Replace("\\", "/")}";
