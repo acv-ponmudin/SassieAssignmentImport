@@ -43,15 +43,17 @@ namespace SassieAssignmentImport
                 //assignmentID = 25312675;//repair order first page, non compliant items images 
                 // 26224414 -> post-sale 15 and pre-sale 5 vehicles 
                 //25075732 -> Could not get content from provided url.
+                //25075850, 25076971, non-compliant review status
 
+                bool isProduction = false;
                 bool authenticate = true;
                 bool includeImages = true;
 
-                var controller = new AssignmentImportController();
+                var controller = new AssignmentImportController(isProduction);
                 Log.Information("Please wait while fetching assignments...");
                 var assignments = controller.GetAssignments();
 
-                //List<int> assignments = new List<int>() { 20008621 };
+                //var assignments = new List<int>() { 25075819, 25075850, 25076971, 25076844,  25076642, 25076691 };
 
                 if (assignments == null || assignments.Count == 0)
                 {

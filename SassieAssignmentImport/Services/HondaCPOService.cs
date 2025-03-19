@@ -19,17 +19,21 @@ namespace SassieAssignmentImport.Services
             int year = 2023;
             //Honda Account Number starts with '20'
             //Acura Account Number starts with '25'
-            int acctNumber = 20;
+            int hondaAcctNumber = 20;
+            int acuraAcctNumber = 25;
+            var startDate = new DateTime(2022, 6, 20).ToString("yyyy-MM-dd");
+            var endDate = new DateTime(2022, 6, 22).ToString("yyyy-MM-dd");
 
-            string cmdText = $"SELECT A.Assignment_ID FROM ASSIGNMENT_AUDIT A \r\n\t\t\t\t\t\t\t\t\t\t\t\tINNER JOIN dbo.ORGANIZATION AS O ON A.Dealer_ID = O.Organization_ID \r\n\t\t\t\t\t\t\t\t\t\t\t\tINNER JOIN dbo.ORGANIZATION_RELATIONSHIP_ROLE AS ORO ON O.Organization_ID = ORO.Organization_ID \r\n\t\t\t\t\t\t\t\t\t\t\t\tLEFT JOIN ASSIGNMENT_JOB_SASSIE S ON A.Assignment_ID = S.Assignment_ID \r\n\t\t\t\t\t\t\t\t\t\t\t\tWHERE ORO.Account_Number LIKE '{acctNumber}%' \r\n\t\t\t\t\t\t\t\t\t\t\t\tAND LEN(ORO.Account_Number) = 6 \r\n\t\t\t\t\t\t\t\t\t\t\t\tAND YEAR(A.audit_date) = {year} \r\n\t\t\t\t\t\t\t\t\t\t\t\tAND S.Assignment_ID IS NULL \r\n\t\t\t\t\t\t\t\t\t\t\t\tORDER BY A.audit_date DESC";
+            //Query by Year
+            string cmdText1 = $"SELECT A.Assignment_ID FROM ASSIGNMENT_AUDIT A                                                          INNER JOIN dbo.ORGANIZATION AS O ON A.Dealer_ID = O.Organization_ID                                                     INNER JOIN dbo.ORGANIZATION_RELATIONSHIP_ROLE AS ORO ON O.Organization_ID = ORO.Organization_ID                             LEFT JOIN ASSIGNMENT_JOB_SASSIE S ON A.Assignment_ID = S.Assignment_ID                                                      WHERE (ORO.Account_Number LIKE '{hondaAcctNumber}%' or ORO.Account_Number LIKE '{acuraAcctNumber}%')                        AND LEN(ORO.Account_Number) = 6 AND YEAR(A.audit_date) = {year} AND S.Assignment_ID IS NULL                             ORDER BY A.audit_date DESC";
 
-            //string cmdText = $"SELECT top 100 A.Assignment_ID FROM ASSIGNMENT_AUDIT A \r\n\t\t\t\t\t\t\t\t\t\t\t\tINNER JOIN dbo.ORGANIZATION AS O ON A.Dealer_ID = O.Organization_ID \r\n\t\t\t\t\t\t\t\t\t\t\t\tINNER JOIN dbo.ORGANIZATION_RELATIONSHIP_ROLE AS ORO ON O.Organization_ID = ORO.Organization_ID \r\n\t\t\t\t\t\t\t\t\t\t\t\tLEFT JOIN ASSIGNMENT_JOB_SASSIE S ON A.Assignment_ID = S.Assignment_ID \r\n\t\t\t\t\t\t\t\t\t\t\t\tWHERE ORO.Account_Number LIKE '{acctNumber}%' \r\n\t\t\t\t\t\t\t\t\t\t\t\tAND LEN(ORO.Account_Number) = 6 \r\n\t\t\t\t\t\t\t\t\t\t\t\tAND YEAR(A.audit_date) = {year} \r\n\t\t\t\t\t\t\t\t\t\t\t\tAND S.Assignment_ID IS NULL \r\n\t\t\t\t\t\t\t\t\t\t\t\tORDER BY A.audit_date DESC";
+            //Query between dates
+            string cmdText3 = $"SELECT A.Assignment_ID FROM ASSIGNMENT_AUDIT A                                                          INNER JOIN dbo.ORGANIZATION AS O ON A.Dealer_ID = O.Organization_ID                                                     INNER JOIN dbo.ORGANIZATION_RELATIONSHIP_ROLE AS ORO ON O.Organization_ID = ORO.Organization_ID                             LEFT JOIN ASSIGNMENT_JOB_SASSIE S ON A.Assignment_ID = S.Assignment_ID                                                  WHERE (ORO.Account_Number LIKE '{hondaAcctNumber}%' or ORO.Account_Number LIKE '{acuraAcctNumber}%')  AND LEN(ORO.Account_Number) = 6  AND A.audit_date between '{startDate}' and '{endDate}'  AND S.Assignment_ID IS NULL                ORDER BY A.audit_date DESC";
 
-            //var dtStart = new DateTime(2022, 6, 20).ToString("yyyy-MM-dd");
-            //var dtEnd = new DateTime(2022, 6, 22).ToString("yyyy-MM-dd");
-            //string cmdText = $"SELECT A.Assignment_ID FROM ASSIGNMENT_AUDIT A \r\n\t\t\t\t\t\t\t\t\t\t\t\tINNER JOIN dbo.ORGANIZATION AS O ON A.Dealer_ID = O.Organization_ID \r\n\t\t\t\t\t\t\t\t\t\t\t\tINNER JOIN dbo.ORGANIZATION_RELATIONSHIP_ROLE AS ORO ON O.Organization_ID = ORO.Organization_ID \r\n\t\t\t\t\t\t\t\t\t\t\t\tLEFT JOIN ASSIGNMENT_JOB_SASSIE S ON A.Assignment_ID = S.Assignment_ID \r\n\t\t\t\t\t\t\t\t\t\t\t\tWHERE ORO.Account_Number LIKE '{acctNumber}%' \r\n\t\t\t\t\t\t\t\t\t\t\t\tAND LEN(ORO.Account_Number) = 6 \r\n\t\t\t\t\t\t\t\t\t\t\t\tAND A.audit_date between '{dtStart}' and '{dtEnd}' \r\n\t\t\t\t\t\t\t\t\t\t\t\tAND S.Assignment_ID IS NULL \r\n\t\t\t\t\t\t\t\t\t\t\t\tORDER BY A.audit_date DESC";
+            //Query between dates NOT joins ASSIGNMENT_JOB_SASSIE- Temp
+            string cmdText4 = $"SELECT A.Assignment_ID FROM ASSIGNMENT_AUDIT A                                                           INNER JOIN dbo.ORGANIZATION AS O ON A.Dealer_ID = O.Organization_ID                                                     INNER JOIN dbo.ORGANIZATION_RELATIONSHIP_ROLE AS ORO ON O.Organization_ID = ORO.Organization_ID                         WHERE (ORO.Account_Number LIKE '{hondaAcctNumber}%' or ORO.Account_Number LIKE '{acuraAcctNumber}%')                        AND LEN(ORO.Account_Number) = 6                                                                                             AND A.audit_date between '{startDate}' and '{endDate}'                                                                      ORDER BY A.audit_date DESC";
 
-            DataSet dsResult = SqlHelper.ExecuteDataset(_connection, CommandType.Text, cmdText);
+            DataSet dsResult = SqlHelper.ExecuteDataset(_connection, CommandType.Text, cmdText4);
 
             List<int> res = dsResult.Tables[0].AsEnumerable().Select(row => (int)row["Assignment_ID"]).ToList();
             return res;

@@ -5,6 +5,7 @@ using SassieAssignmentImport.Utilities;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -36,10 +37,10 @@ namespace SassieAssignmentImport.Controllers
         #endregion
 
         #region Constructor
-        public AssignmentImportController()
+        public AssignmentImportController(bool isProduction)
         {
             _hondaCPOService = new HondaCPOService();
-            _sassieApi = new SassieApiService();
+            _sassieApi = new SassieApiService(isProduction);
 
             _presale_list = new List<Dictionary<int, string>>();
             _postsale_list = new List<Dictionary<int, string>>();
@@ -252,15 +253,35 @@ namespace SassieAssignmentImport.Controllers
 
         private void ConsultationInformation(DataSet dsCPOData)
         {
-
             foreach (var item in QuestionMapping.consultation_mapping)
             {
                 _inspectionData.Add(item.Value, dsCPOData.Tables[0].Rows[0][item.Key].ToString());
             }
 
+            string reviewStatusQID = "question_19501";
+            string reviewStatus = dsCPOData.Tables[0].Rows[0]["ReviewStatus"].ToString();
+            if (string.IsNullOrEmpty(reviewStatus))
+            {
+                reviewStatus = "Compliant";
+            }
+
+            switch (reviewStatus)
+            {
+                //Pending
+                //Upheld
+                //Rescinded
+                //Compliant
+                case "Rescission Letter Sent":
+                case "Non-Compliance Letter Sent":
+                case "Non-Compliance & Suspension Letter Sent":
+                    reviewStatusQID = "question_31221"; //Production
+                    break;
+            }
+
+            _inspectionData.Add(reviewStatusQID, reviewStatus);
+
             _inspectionData.Add("question_1", Convert.ToDateTime(dsCPOData.Tables[0].Rows[0]["Audit_Date"]).ToString("yyyy-MM-dd"));
             _inspectionData.Add("question_21", Convert.ToDateTime(dsCPOData.Tables[0].Rows[0]["Audit_Date"]).ToShortTimeString());
-
         }
 
         private void DealerInformation(DataSet dsCPOData)

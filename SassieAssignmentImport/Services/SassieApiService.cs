@@ -15,9 +15,8 @@ namespace SassieAssignmentImport.Services
         private static int _counter = 1;
         string uriString = "https://uat.sassieshop.com";
         string uriPROD = "https://www.sassieshop.com";
-        bool isProduction = false;
 
-        public SassieApiService()
+        public SassieApiService(bool isProduction)
         {
             if (isProduction)
             {

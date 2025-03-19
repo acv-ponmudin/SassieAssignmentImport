@@ -17,7 +17,7 @@ namespace SassieAssignmentImport.Utilities
         public static Dictionary<string, string> consultation_mapping = new Dictionary<string, string>() {
                 {"Assignment_ID","question_11" },
                 {"ConsultationStatus","question_20011" },
-                {"ReviewStatus","question_19501" },
+                //{"ReviewStatus","question_19501" },
                 //{"Inspector_ID","question_2741" }
             };
         public static Dictionary<string, string> dealer_mapping = new Dictionary<string, string>() {
